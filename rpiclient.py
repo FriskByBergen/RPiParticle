@@ -14,8 +14,7 @@ import serial
 import schedule
 
 headers = {'Content-Type': 'application/json'}
-#payload = {'apikey': '7af5341f3b4982bb6846fca164f1e7aff3db3'}
-payload = {'apikey': '571201c719062bc1732021f7'}
+payload = {'apikey': 'someapikey'}
 url = "https://friskbybergen-1d96.restdb.io/rest/posts"
 #ser = serial.Serial('/dev/tty.wchusbserial1430', baudrate=9600, stopbits=1, parity="N",  timeout=2)
 ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
