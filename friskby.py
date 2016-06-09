@@ -1,6 +1,10 @@
+#!/usr/bin/python3
+
 __author__ = 'njb'
 
-DEVICEID = "PI1_Gronnlien"
+# Enter the correct ID of your Device here:
+# DEVICEID = "FriskPI03"
+DEVICEID = ....
 INTERVAL = 10
 
 import requests
@@ -14,8 +18,11 @@ import serial
 import schedule
 
 headers = {'Content-Type': 'application/json'}
-payload = {'apikey': 'someapikey'}
+payload = {'apikey': '571201c719062bc1732021f7'}
+headers = {'Content-Type': 'application/json'}
 url = "https://friskbybergen-1d96.restdb.io/rest/posts"
+HEROKU_URL = "https://friskby.herokuapp.com/sensor/api/reading/"
+HEROKU_KEY = "407f1ef4-2eb2-4299-b977-464e26a094e7"
 #ser = serial.Serial('/dev/tty.wchusbserial1430', baudrate=9600, stopbits=1, parity="N",  timeout=2)
 ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
 
@@ -32,14 +39,29 @@ def job():
         pm10 = round(sum(pm10list) / len(pm10list),2)
         pm25list = []
         pm10list = []
-        print("PM2.5 - ", pm25, " PM10 - ", pm10)
-        data = {'timestamp': datetime.datetime.utcnow().isoformat(),
+        # print("PM2.5 - ", pm25, " PM10 - ", pm10)
+        timestamp = datetime.datetime.utcnow().isoformat()
+        data = {'timestamp': timestamp,
                 'data': {"PM25": pm25, "PM10":pm10},
                 'deviceid': DEVICEID,
                 #'location': {'type': 'Point', 'coordinates': location}
                 }
+
+
+        data_heroku_PM10 = {"value"     : pm10,
+                            "sensorid"  : "FriskPI03_PM10",
+                            "timestamp" : timestamp,
+                            "key"       : HEROKU_KEY}
+        
+        data_heroku_PM25 = {"value"     : pm25,
+                            "sensorid"  : "FriskPI03_PM25",
+                            "timestamp" : timestamp,
+                            "key"       : HEROKU_KEY}
+
         try:
             r = requests.post(url, params=payload, headers=headers, data=json.dumps(data))
+            requests.post( HEROKU_URL , headers=headers, data=json.dumps(data_heroku_PM10))
+            requests.post( HEROKU_URL , headers=headers, data=json.dumps(data_heroku_PM25))
         except:
             pass
 
@@ -51,7 +73,7 @@ schedule.every(INTERVAL).minutes.do(run_threaded, job)
 
 while True:
     schedule.run_pending()
-
+    time.sleep(0.5)
     try:
 
         s = ser.read(1)
@@ -73,7 +95,7 @@ while True:
                 try:
                     pm25 = float(pm2hb + pm2lb*256)/10.0
                     pm10 = float(pm10hb + pm10lb*256)/10.0
-                    print("PM2.5 - ", pm25 ," PM10 - ", pm10 )
+                    #print("PM2.5 - ", pm25 ," PM10 - ", pm10 )
                     #post2restdb()
                     pm10list.append(pm10)
                     pm25list.append(pm25)
