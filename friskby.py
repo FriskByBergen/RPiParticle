@@ -5,6 +5,10 @@ __author__ = 'njb'
 # Enter the correct ID of your Device here:
 # DEVICEID = "FriskPI03"
 DEVICEID = ....
+HEROKU_SENSORIDMP10 = "FriskPI03_PM10"
+HEROKU_SENSORIDMP25 = "FriskPI03_PM25" 
+
+#se the reporting interval in minuttes
 INTERVAL = 10
 
 import requests
@@ -20,14 +24,20 @@ import schedule
 headers = {'Content-Type': 'application/json'}
 payload = {'apikey': '571201c719062bc1732021f7'}
 headers = {'Content-Type': 'application/json'}
-url = "https://friskbybergen-1d96.restdb.io/rest/posts"
+
+RESTDB_URL = "https://friskbybergen-1d96.restdb.io/rest/posts"
 HEROKU_URL = "https://friskby.herokuapp.com/sensor/api/reading/"
 HEROKU_KEY = "407f1ef4-2eb2-4299-b977-464e26a094e7"
+
+#choose one of the following depending on how your SDS is connected 
 #ser = serial.Serial('/dev/tty.wchusbserial1430', baudrate=9600, stopbits=1, parity="N",  timeout=2)
-ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
+#ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
+#ser = serial.Serial('/dev/ttyAMA0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
 
 pm25list = []
 pm10list = []
+
+#set the loction of your device
 location = [5.3346007,60.3695006]
 
 def job():
@@ -59,7 +69,7 @@ def job():
                             "key"       : HEROKU_KEY}
 
         try:
-            r = requests.post(url, params=payload, headers=headers, data=json.dumps(data))
+            requests.post( RESTDB_URL, params=payload, headers=headers, data=json.dumps(data))
             requests.post( HEROKU_URL , headers=headers, data=json.dumps(data_heroku_PM10))
             requests.post( HEROKU_URL , headers=headers, data=json.dumps(data_heroku_PM25))
         except:
