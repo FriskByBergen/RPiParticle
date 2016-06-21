@@ -4,6 +4,7 @@ import subprocess
 import shutil
 from git.repo.base import Repo
 
+
 class GitModule(object):
     
     def __init__(self , **kwargs):
@@ -17,13 +18,19 @@ class GitModule(object):
             raise ValueError("Can only supply one of url and local_path")
             
         if url:
-            local_path = tempfile.mkdtemp( )
-            self.repo = Repo.clone_from( url , local_path )
+            self.work_dir = tempfile.mkdtemp( )
+            self.repo = Repo.clone_from( url , self.work_dir )
         else:
+            self.work_dir = None
             self.repo = Repo( local_path )
             origin = self.repo.remote( name = "origin")
             origin.fetch( )
     
+
+    def __del__(self):
+        if self.work_dir and os.path.isdir( self.work_dir ):
+            shutil.rmtree( self.work_dir )
+
 
     def getRoot(self):
         return self.repo.working_tree_dir
@@ -44,8 +51,8 @@ class GitModule(object):
             raise IOError("No such entry in repo:%s" % path)
 
 
-    def checkout(self , branch):
-        self.repo.git.checkout( branch )
+    def checkout(self , ref):
+        self.repo.git.checkout( ref )
 
 
 
