@@ -2,9 +2,10 @@ import os.path
 import json
 import requests
 import tempfile
+from urlparse import urlparse
 
 class DeviceConfig(object):
-    required_keys = ["git_repo" , "git_ref" , "post_key" , "sensor_list"]
+    required_keys = ["git_repo" , "git_ref" , "post_key" , "sensor_list" , "post_path" , "config_path" , "server_url" , "device_id"]
 
     def __init__(self , filename):
         if not os.path.isfile( filename ):
@@ -18,15 +19,33 @@ class DeviceConfig(object):
         self.filename = filename
         self.data = config
 
+    def __eq__(self , other):
+        if self.data == other.data:
+            return True
+        else:
+            return False
+
 
     def save(self , filename = None):
-        if filename:
-            fileH = open(filename , "w")
-        else:
-            fileH = open(self.filename , "w")
+        if filename is None:
+            filename  = self.filename
+        
+        path = os.path.dirname( filename )
+        if not os.path.isdir( path ):
+            os.makedirs( path )
 
-        fileH.write( json.dumps( self.data ))
+        with open(filename , "w") as fileH:
+            fileH.write( json.dumps( self.data ))
 
+
+    def getServerURL(self):
+        return self.data["server_url"]
+
+    def getConfigPath(self):
+        return self.data["config_path"]
+        
+    def getPostURL(self):
+        return "%s/%s" % (self.data["server_url"], self.data["post_path"])
 
     def getRepoURL(self):
         return self.data["git_repo"]
@@ -34,21 +53,38 @@ class DeviceConfig(object):
     def getGitRef(self):
         return self.data["git_ref"]
 
+    def getDeviceID(self):
+        return self.data["device_id"]
 
+    def getPostKey(self):
+        return self.data["post_key"]
+
+
+    def downloadNew(self):
+        update_url = url = "%s/%s" % (self.getServerURL( ) , self.getConfigPath( ))
+        try:
+            new_config = self.download( update_url )
+        except:
+            return self
+
+            
     @classmethod
-    def download(cls , url , target_file):
+    def download(cls , url):
         response = requests.get( url )
         if response.status_code != 200:
             raise ValueError("http GET return status:%s" % response.status_code)
 
         fd , config_file = tempfile.mkstemp( )
         data = json.loads(response.content)
+        tmp = urlparse( url )
+        config = data["client_config"]
+        config["server_url"] = "%s://%s" % (tmp.scheme , tmp.netloc) 
         with open(config_file,"w") as f:
-            f.write( json.dumps(data["client_config"] ))
+            f.write( json.dumps(config) )
             
         config = DeviceConfig( config_file )
         os.unlink( config_file ) 
-        config.filename = target_file
+        config.filename = None
         
         return config
         

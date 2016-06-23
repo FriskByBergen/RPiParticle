@@ -10,6 +10,7 @@ class GitModule(object):
     def __init__(self , **kwargs):
         url = kwargs.get("url")
         local_path = kwargs.get("local_path")
+        self.work_dir = None
 
         if url is None and local_path is None:
             raise ValueError("Must supply one of url and local_path")

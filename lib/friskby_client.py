@@ -7,10 +7,9 @@ import json
 class FriskbyClient(object):
     headers = {'Content-Type': 'application/json'}
 
-    def __init__(self , server_url , sensor_id , post_key):
-        self.server_url = server_url
+    def __init__(self , device_config , sensor_id):
+        self.device_config = device_config
         self.sensor_id = sensor_id
-        self.post_key = post_key
         self.stack = []
 
 
@@ -24,9 +23,9 @@ class FriskbyClient(object):
             data = {"timestamp" : pair[0],
                     "sensorid"  : self.sensor_id,
                     "value"     : pair[1],
-                    "key"       : self.post_key }
+                    "key"       : self.device_config.getPostKey( ) }
 
-            respons = requests.post( self.server_url , headers=FriskbyClient.headers, data=json.dumps(data))
+            respons = requests.post( self.device_config.getPostURL( ) , headers=FriskbyClient.headers, data=json.dumps(data))
             if response.status_code != 201:
                 stack.append( pair )
                 break

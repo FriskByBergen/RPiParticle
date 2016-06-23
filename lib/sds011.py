@@ -2,15 +2,21 @@ import serial
 
 
 class SDS011(object):
-    device = serial.Serial('/dev/ttyUSB0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
+    device_usb = serial.Serial('/dev/ttyUSB0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
+    device_ama = serial.Serial('/dev/ttyAMA0', baudrate=9600, stopbits=1, parity="N",  timeout=2)
 
-    @classmethod
-    def read(cls):
-        s = cls.device.read(1)
+    def __init__(self , usb):
+        if usb:
+            self.reader = SDS011.device_usb
+        else:
+            self.reader = SDS011.device_ama
+    
+    def read(self):
+        s = self.device.read(1)
         if ord(s) == int("AA",16):
-            s = cls.device.read(1)
+            s = self.device.read(1)
             if ord(s) == int("C0",16):
-                s = cls.device.read(7)
+                s = self.device.read(7)
                 
                 pm25hb = s[0]
                 pm25lb = s[1]

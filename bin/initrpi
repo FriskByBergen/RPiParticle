@@ -3,7 +3,8 @@ import sys
 import requests
 import json
 import tempfile
-root_url = "https://friskby.herokuapp.com/sensor/api/device/"
+default_root_url = "https://friskby.herokuapp.com"
+sensor_path = "/sensor/api/device"
 
 from device_config import DeviceConfig
 from git_module import GitModule
@@ -12,11 +13,11 @@ fd , tmp_file = tempfile.mkstemp( )
 
 while True:
     device_id = raw_input("Device id....: ")
-    default_url = root_url + "%s/" % device_id
-    config_url = raw_input("Config url for device (default: %s) .." % default_url)
-    if config_url == "":
-        config_url = default_url
+    root_url = raw_input("Root url for server (default: %s) .." % default_root_url)
+    if root_url == "":
+        root_url = default_root_url
 
+    config_url = root_url + "%s/%s/" % (sensor_path , device_id)
     print("Fetching config from:%s " % config_url)
     
     try:
