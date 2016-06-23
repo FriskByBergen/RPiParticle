@@ -4,7 +4,8 @@ import os
 import os.path
 from unittest import TestLoader,TextTestRunner
 
-TEST_PYTHONPATH = os.path.abspath( os.path.join( os.path.dirname(__file__) , "../lib") ) 
+TEST_PYTHONPATH = "%s:%s" % (os.path.abspath( os.path.join( os.path.dirname(__file__) , "../lib") ) , os.path.abspath( os.path.dirname( __file__)))
+
 os.environ["PYTHONPATH"] = TEST_PYTHONPATH + os.pathsep + os.getenv("PYTHONPATH", "")
 for path_element in reversed(TEST_PYTHONPATH.split(os.pathsep)):
     sys.path.insert(0, path_element)
