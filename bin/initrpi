@@ -3,7 +3,9 @@ import sys
 import requests
 import json
 import os.path
-import dist
+
+ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
+sys.path.insert(0 , os.path.join(ROOT , "lib"))
 
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
@@ -12,7 +14,7 @@ default_ROOT = "/tmp/friskby/testing"
 
 
 
-from dist import files, directories
+import dist
 from device_config import DeviceConfig
 from git_module import GitModule
 
