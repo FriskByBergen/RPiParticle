@@ -26,7 +26,7 @@ class Sampler(object):
                 raise ValueError("Invalid time values")
         elif sleep_time is None:
             self.num_sample = num_sample
-            self.sleep_time = sample_time / num_sample
+            self.sleep_time = 1.0 * sample_time / num_sample
         else:
             self.num_sample = num_sample
             self.sleep_time = sleep_time
