@@ -44,5 +44,5 @@ git_module.runTests( "tests/run_tests" )
 
 
 git_module.install( ROOT , dist.files , dist.directories )
-
+config.save( filename = os.path.join(ROOT , "etc/config.json"))
 
