@@ -2,6 +2,8 @@
 import sys
 import os.path
 
+SAMPLE_TIME = 10 * 60
+
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , lib))
 config_file = os.path.join( ROOT , "etc/config.json")
@@ -24,7 +26,10 @@ def install(config):
 
 def restart(config):
     install(config)
-    os.fork+++
+    os.execl( __file__ , __file__)
+
+    raise Exception("Fatal error: os.execl() returned - trying to rollback")
+
 
 
 def rollback(config):

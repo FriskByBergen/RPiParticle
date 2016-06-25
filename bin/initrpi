@@ -22,6 +22,12 @@ while True:
     if root_url == "":
         root_url = default_root_url
 
+    ROOT = raw_input("Installation root (default: %s) .." % default_ROOT)
+    if ROOT == "":
+        ROOT = default_ROOT
+        
+    print 
+
     config_url = root_url + "%s/%s/" % (sensor_path , device_id)
     print("Fetching config from:%s " % config_url)
     
@@ -31,13 +37,6 @@ while True:
     except Exception as e:
         print("Failed to download configuration: %s\n" % e)
 
-
-while True:
-    ROOT = raw_input("Installation root (default: %s) .." % default_ROOT)
-    if ROOT == "":
-        ROOT = default_root
-    # Should have some sanity check on this ROOT
-    break
     
 
 print("git clone: %s" % config.getRepoURL())
