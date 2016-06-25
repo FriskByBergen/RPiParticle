@@ -5,18 +5,29 @@ from sds011 import SDS011
 from device_config import DeviceConfig
 from git_module import GitModule
 
-config_file = "/home/rpi/friskby/etc/config.json"
+ROOT = "/tmp/friskby/testing"
+config_file = os.path.join( ROOT , "etc/config.json")
 
-def restart(config):
+
+def install(config):
     git_module = GitModule( url = config.getRepoURL() )
     git_module.checkout( config.getGitRef( ) )
     git_module.runTests( "tests/run_tests" )
-    #git_module.install( )
+    git_module.install( )
     config.save( filename = config_file )
-    #os.fork+++
+
+
+def restart(config):
+    install(config)
+    os.fork+++
+
+
+def rollback(config):
+    install(config)
 
 
 config = DeviceConfig( config_file )
+config.postGitVersion( )
 
 device_id = config.getDeviceID( )
 client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
@@ -30,4 +41,8 @@ while True:
 
     new_config = config.downloadNew( )
     if new_config != config:
-        restart( new_config )
+        try:
+            restart( new_config )
+        except:
+            rollback( config )
+    

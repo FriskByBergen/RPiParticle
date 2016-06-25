@@ -1,10 +1,14 @@
 import os.path
 import json
 import requests
+import datetime
 import tempfile
 from urlparse import urlparse
 
+from git_module import GitModule
+
 class DeviceConfig(object):
+    config_timeout = 0
     required_keys = ["git_repo" , "git_ref" , "post_key" , "sensor_list" , "post_path" , "config_path" , "server_url" , "device_id"]
 
     def __init__(self , filename):
@@ -18,6 +22,8 @@ class DeviceConfig(object):
 
         self.filename = filename
         self.data = config
+        self.config_ts = datetime.datetime.now()
+
 
     def __eq__(self , other):
         if self.data == other.data:
@@ -61,11 +67,17 @@ class DeviceConfig(object):
 
 
     def downloadNew(self):
+        diff = datetime.datetime.now( ) - self.config_ts
+        if diff.total_seconds() < self.config_timeout:
+            return self
+
+        self.config_ts = datetime.datetime.now( )
         update_url = url = "%s/%s" % (self.getServerURL( ) , self.getConfigPath( ))
         try:
             new_config = self.download( update_url )
         except:
             return self
+
 
             
     @classmethod
@@ -88,3 +100,15 @@ class DeviceConfig(object):
         
         return config
         
+
+    def postGitVersion(self):
+        git_module = GitModule( url = config.getRepoURL() )
+        git_module.checkout( config.getGitRef( ) )
+        
+        data = {"key"     : self.getPostKey(),
+                "git_ref" : "%s / %s" % git_module.getHead() }
+
+        response = client.put("/sensor/api/device/%s/" % self.getDeviceID( ),
+                              data = json.dumps( data ) , 
+                              content_type = "application/json")
+

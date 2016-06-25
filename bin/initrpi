@@ -2,14 +2,20 @@
 import sys
 import requests
 import json
-import tempfile
+import os.path
+import dist
+
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
 
+
+ROOT = "/tmp/friskby/testing"
+config_file = os.path.join( ROOT , "etc/config.json")
+
+
+from dist import files, directories
 from device_config import DeviceConfig
 from git_module import GitModule
-
-fd , tmp_file = tempfile.mkstemp( )
 
 while True:
     device_id = raw_input("Device id....: ")
@@ -21,7 +27,7 @@ while True:
     print("Fetching config from:%s " % config_url)
     
     try:
-        config = DeviceConfig.download( config_url , tmp_file )
+        config = DeviceConfig.download( config_url )
         break
     except Exception as e:
         print("Failed to download configuration: %s\n" % e)
@@ -37,10 +43,6 @@ print("Git local: %s" % git_module.getRoot( ))
 git_module.runTests( "tests/run_tests" )
 
 
-files = [] 
-directories = ["lib"]
-target = "/tmp"
-
-git_module.install( target , files , directories )
+git_module.install( ROOT , dist.files , dist.directories )
 
 
