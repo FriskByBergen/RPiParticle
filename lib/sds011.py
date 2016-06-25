@@ -7,9 +7,9 @@ class SDS011(object):
 
     def __init__(self , usb):
         if usb:
-            self.reader = SDS011.device_usb
+            self.device = SDS011.device_usb
         else:
-            self.reader = SDS011.device_ama
+            self.device = SDS011.device_ama
     
     def read(self):
         s = self.device.read(1)
