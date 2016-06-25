@@ -8,9 +8,8 @@ import dist
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
 
+default_ROOT = "/tmp/friskby/testing"
 
-ROOT = "/tmp/friskby/testing"
-config_file = os.path.join( ROOT , "etc/config.json")
 
 
 from dist import files, directories
@@ -31,6 +30,15 @@ while True:
         break
     except Exception as e:
         print("Failed to download configuration: %s\n" % e)
+
+
+while True:
+    ROOT = raw_input("Installation root (default: %s) .." % default_ROOT)
+    if ROOT == "":
+        ROOT = default_root
+    # Should have some sanity check on this ROOT
+    break
+    
 
 print("git clone: %s" % config.getRepoURL())
 git_module = GitModule( url = config.getRepoURL() )
