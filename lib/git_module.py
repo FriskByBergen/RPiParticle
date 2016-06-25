@@ -97,7 +97,7 @@ class GitModule(object):
                 for file in filenames:
                     src_file = os.path.join( dirpath , file )
                     target_file = os.path.join( target_path , file )
-                    shutil.copyfile( src_file , target_file )
+                    shutil.copy( src_file , target_file )
 
 
 
@@ -108,7 +108,7 @@ class GitModule(object):
                 if not os.path.isdir( target_path ):
                     os.makedirs( target_path )
 
-            shutil.copyfile( self.absPath( file ) , target_file )
+            shutil.copy( self.absPath( file ) , target_file )
 
         
         
