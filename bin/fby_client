@@ -5,7 +5,7 @@ import os.path
 SAMPLE_TIME = 10 * 60
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
-sys.path.insert(0 , os.path.join(ROOT , lib))
+sys.path.insert(0 , os.path.join(ROOT , "lib"))
 config_file = os.path.join( ROOT , "etc/config.json")
 
 
