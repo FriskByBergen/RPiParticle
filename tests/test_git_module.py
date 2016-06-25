@@ -44,14 +44,14 @@ def make_origin():
     add_executable( repo , "tests/run_OK" , "#!/bin/bash\nexit 0\n")
     add_executable( repo , "tests/run_fail" , "#!/bin/bash\nexit 1\n")
 
-    repo.git.commit(m = "message", author="\"test <test@email.com>\"")
+    repo.git.commit(m = "message")
 
     repo.git.branch("version2")
     repo.git.checkout("version2")
     with open( os.path.join(origin_url , "file2.txt") , "w") as f:
         f.write("File with content")
     repo.git.add("file2.txt")
-    repo.git.commit(m = "message", author="\"test <test@email.com>\"")
+    repo.git.commit(m = "message")
 
     return repo
 
