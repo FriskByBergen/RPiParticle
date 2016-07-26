@@ -3,7 +3,9 @@ import sys
 import requests
 import json
 import os.path
+import subprocess
 
+requirements_file = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../requirements.txt" ))
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
 
@@ -17,6 +19,22 @@ default_ROOT = "/tmp/friskby/testing"
 import dist
 from device_config import DeviceConfig
 from git_module import GitModule
+
+def install_requirements( ):
+    if not os.path.exists( requirements_file ):
+        sys.exit("The requiremenents file:%s was no found" % requirements_file )
+        
+    print("Installing requirements from: %s" % requirements_file )
+
+    with open(os.devnull , "wb") as dev_null:
+        status = subprocess.call(["pip", "install", "-r", requirements_file ] , stdout = dev_null, stderr = None)
+    if status != 0:
+        msg = "Failed to install requirements. Need to run as sudo ?"
+        sys.exit(msg)
+        
+    
+
+install_requirements()
 
 while True:
     device_id = raw_input("Device id....: ")
