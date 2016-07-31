@@ -19,6 +19,22 @@ default_ROOT = "/tmp/friskby/testing"
 import dist
 from device_config import DeviceConfig
 from git_module import GitModule
+from wifi_config import WifiConfig
+
+
+
+def configure_wifi():
+    conf = WifiConfig()
+    while True:
+        try:
+            ssid = raw_input("SSID.......: ")
+            psk_key = raw_input("Password...: ")
+            conf.addnetwork( ssid, psk_key )
+            conf.save()
+            break
+        except:
+            pass
+
 
 def install_requirements( ):
     if not os.path.exists( requirements_file ):
@@ -35,6 +51,18 @@ def install_requirements( ):
     
 
 install_requirements()
+
+while True:
+    config_wifi = raw_input("Configure wifi [y/N]: ")
+    if config_wifi == "":
+        config_wifi = "N"
+        
+    if config_wifi in ["y","Y"]:
+        configure_wifi()
+        break
+    elif config_wifi in ["n","N"]:
+        break
+    
 
 while True:
     device_id = raw_input("Device id....: ")
