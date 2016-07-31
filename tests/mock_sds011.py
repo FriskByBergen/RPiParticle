@@ -1,6 +1,8 @@
 class SDS011(object):
+
+    def __init__(self , usb):
+        self.usb = usb
     
-    @classmethod
-    def read(cls):
+    def read(self):
         return (10,25)
 
