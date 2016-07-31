@@ -1,7 +1,7 @@
 import os.path
 import re
 from collections import OrderedDict
-setting = re.compile(r"^\s*(?P<key>\w+)=\"?(?P<value>[\w/]+)\"?$", re.MULTILINE)
+setting = re.compile(r"^\s*(?P<key>\w+)=\"?(?P<value>[-\w/]+)\"?$", re.MULTILINE)
 network = re.compile(r"^network=\{(?P<net_config>.+?)\}$" , re.MULTILINE + re.DOTALL)
 
 class Network(object):
