@@ -19,14 +19,15 @@ class Network(object):
 
     def save(self , f):
         f.write("network={\n")
-        f.write("    ssid=\"%s\"\n" % self.ssid)
-        f.write("    psk=\"%s\"\n" % self.psk)
-        f.write("    key_mgmt=WPA-PSK\n")
+        f.write("\tssid=\"%s\"\n" % self.ssid)
+        f.write("\tpsk=\"%s\"\n" % self.psk)
+        f.write("\tkey_mgmt=WPA-PSK\n")
         f.write("}\n\n")
 
 
 
 class WifiConfig(object):
+    network_settings = set(["ssid" , "psk"])
 
     def __init__(self , config_file = "/etc/wpa_supplicant/wpa_supplicant.conf"):
         self.__networks = {}
@@ -35,7 +36,9 @@ class WifiConfig(object):
         with open(config_file) as f:
             content = f.read()
             for (key,value) in setting.findall( content ):
-                self.__settings[key] = value
+                if not key in WifiConfig.network_settings:
+                    self.__settings[key] = value
+                    
 
             for net_config in network.findall( content ):
                 d = {}

@@ -58,7 +58,7 @@ class WifiConfigTest(TestCase):
         self.assertEqual( network2.psk  , "psk2")
 
 
-    def test_write(self):
+    def test_valid_content(self):
         config_file = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "wpa_supplicant.conf") )
         conf = WifiConfig( config_file = config_file )
         with self.assertRaises( ValueError ):
@@ -67,6 +67,7 @@ class WifiConfigTest(TestCase):
         with self.assertRaises( ValueError ):
             conf.addnetwork("SSID", "")
 
-
         with self.assertRaises( ValueError ):
             conf.addnetwork("", "")
+        
+        self.assertFalse( "ssid" in conf.settings() )
