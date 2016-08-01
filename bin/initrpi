@@ -27,10 +27,12 @@ def configure_wifi():
     conf = WifiConfig()
     while True:
         try:
-            ssid = raw_input("SSID.......: ")
-            psk_key = raw_input("Password...: ")
+            ssid = raw_input("SSID.........: ")
+            psk_key = raw_input("Password.....: ")
             conf.addnetwork( ssid, psk_key )
             conf.save()
+            break
+        except KeyboardInterrupt:
             break
         except:
             pass
