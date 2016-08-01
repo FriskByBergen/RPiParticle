@@ -104,7 +104,7 @@ class GitModuleTest(TestCase):
             gitm = GitModule( local_path = local_path )
 
         
-
+    @skipIf( on_RPI , "Git commit testing not run on Raspberry pi")
     def test_create_no_origin(self):
         origin_repo = make_origin()
         client_repo = make_client( origin_repo )
@@ -115,7 +115,7 @@ class GitModuleTest(TestCase):
             
 
 
-
+    @skipIf( on_RPI , "Git commit testing not run on Raspberry pi")
     def test_checkout(self):
         client_repo = make_repo( )
 
