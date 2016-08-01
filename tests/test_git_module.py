@@ -2,6 +2,14 @@ import tempfile
 from unittest import TestCase
 import os.path
 import stat
+from serial import SerialException
+
+on_RPI = True
+try:
+    from sds011 import SDS011
+except SerialException:
+    on_RPI = False
+
 
 from git.repo.base import Repo
 from git import GitCommandError, NoSuchPathError, InvalidGitRepositoryError
@@ -129,6 +137,7 @@ class GitModuleTest(TestCase):
             gitm.checkout("does-not-exist")
 
 
+    @skipIf( on_RPI , "Git commit testing not run on Raspberry pi")
     def test_test(self):
         gitm = make_module( )
         with self.assertRaises(IOError):
@@ -141,6 +150,7 @@ class GitModuleTest(TestCase):
         self.assertFalse( gitm.runTests("tests/run_fail"))
 
 
+    @skipIf( on_RPI , "Git commit testing not run on Raspberry pi")
     def test_install_files(self):
         temp = tempfile.mkdtemp()
         gitm = make_module( )
@@ -163,6 +173,7 @@ class GitModuleTest(TestCase):
         self.assertTrue( os.path.isfile( os.path.join( target , "tests/run_fail")))
 
 
+    @skipIf( on_RPI , "Git commit testing not run on Raspberry pi")
     def test_install_directories(self):
         temp = tempfile.mkdtemp()
         gitm = make_module( )
