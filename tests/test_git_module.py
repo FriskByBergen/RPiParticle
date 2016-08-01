@@ -1,5 +1,5 @@
 import tempfile 
-from unittest import TestCase
+from unittest import TestCase, skipIf
 import os.path
 import stat
 from serial import SerialException
