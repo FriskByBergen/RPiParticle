@@ -108,7 +108,6 @@ class DeviceConfig(object):
         data = {"key"     : self.getPostKey(),
                 "git_ref" : "%s / %s" % git_module.getHead() }
 
-        response = client.put("/sensor/api/device/%s/" % self.getDeviceID( ),
-                              data = json.dumps( data ) , 
-                              content_type = "application/json")
+        response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
+                                data = json.dumps( data ))
 

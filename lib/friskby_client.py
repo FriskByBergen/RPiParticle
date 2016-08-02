@@ -15,7 +15,7 @@ class FriskbyClient(object):
 
     def post(self , value):
         timestamp = datetime.datetime.utcnow().isoformat()
-        self.stack.insert( (timestamp, value) )
+        self.stack.append( (timestamp, value) )
 
         while True:
             pair = self.stack.pop( )
@@ -26,7 +26,7 @@ class FriskbyClient(object):
                     "key"       : self.device_config.getPostKey( ) }
 
             respons = requests.post( self.device_config.getPostURL( ) , headers=FriskbyClient.headers, data=json.dumps(data))
-            if response.status_code != 201:
+            if respons.status_code != 201:
                 stack.append( pair )
                 break
                 
