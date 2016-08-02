@@ -22,9 +22,9 @@ class SDS011(object):
         # Read in loop until message start: AAC0
         while True:
             s = self.device.read(1)
-            if ord(s) == msg_start:
+            if ord(s) == SDS011.msg_start:
                 s = self.device.read(1)
-                if ord(s) == msg_cmd:
+                if ord(s) == SDS011.msg_cmd:
                     break
             time.sleep( sleep_time )
 
@@ -43,6 +43,9 @@ class SDS011(object):
         cs_expected = (pm25hb + pm25lb + pm10hb + pm10lb + d5 + d6) % 256
         if cs != cs_expected:
             raise Exception("Checksum test failed")
+
+        if tail != SDS011.msg_end:
+            raise Exception("Message was not correctly terminated?")
 
         pm25 = float(pm25hb + pm25lb*256)/10.0
         pm10 = float(pm10hb + pm10lb*256)/10.0
