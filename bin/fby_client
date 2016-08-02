@@ -3,6 +3,7 @@ import sys
 import os.path
 
 SAMPLE_TIME = 10 * 60
+SAMPLE_TIME = 10
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
@@ -46,13 +47,17 @@ client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
 sampler = Sampler( SDS011(true) , sample_time = SAMPLE_TIME , sleep_time = 0.50 )
 
 while True:
+    print "sampling"
     data = sampler.collect( )
+    
+    print "Posting"
     client_pm10.post( data[0].mean() )
     client_pm25.post( data[1].mean() )
 
     new_config = config.downloadNew( )
     if new_config != config:
         try:
+            print "Restarting"
             restart( new_config )
         except:
             rollback( config )
