@@ -102,8 +102,8 @@ class DeviceConfig(object):
         
 
     def postGitVersion(self):
-        git_module = GitModule( url = config.getRepoURL() )
-        git_module.checkout( config.getGitRef( ) )
+        git_module = GitModule( url = self.getRepoURL() )
+        git_module.checkout( self.getGitRef( ) )
         
         data = {"key"     : self.getPostKey(),
                 "git_ref" : "%s / %s" % git_module.getHead() }
