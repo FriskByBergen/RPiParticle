@@ -26,7 +26,7 @@ class SDS011(object):
                 s = self.device.read(1)
                 if ord(s) == SDS011.msg_cmd:
                     break
-            time.sleep( sleep_time )
+            time.sleep( SDS011.sleep_time )
 
         s = self.device.read(8)
                 
