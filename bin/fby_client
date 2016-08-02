@@ -8,6 +8,7 @@ ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
 config_file = os.path.join( ROOT , "etc/config.json")
 
+import dist
 
 from friskby_client import FriskbyClient
 from sampler import Sampler
@@ -20,7 +21,7 @@ def install(config):
     git_module = GitModule( url = config.getRepoURL() )
     git_module.checkout( config.getGitRef( ) )
     git_module.runTests( "tests/run_tests" )
-    git_module.install( )
+    git_module.install( ROOT , files = dist.files , directories = dist.directories )
     config.save( filename = config_file )
 
 
