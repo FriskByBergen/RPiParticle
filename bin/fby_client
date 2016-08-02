@@ -44,7 +44,7 @@ config.postGitVersion( )
 device_id = config.getDeviceID( )
 client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
 client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
-sampler = Sampler( SDS011(true) , sample_time = SAMPLE_TIME , sleep_time = 0.50 )
+sampler = Sampler( SDS011(True) , sample_time = SAMPLE_TIME , sleep_time = 0.50 )
 
 while True:
     print "sampling"
