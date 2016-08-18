@@ -1,6 +1,8 @@
 import os.path
 import re
+import subprocess
 from collections import OrderedDict
+
 setting = re.compile(r"^\s*(?P<key>\w+)=\"?(?P<value>[-\w/]+)\"?$", re.MULTILINE)
 network = re.compile(r"^network=\{(?P<net_config>.+?)\}$" , re.MULTILINE + re.DOTALL)
 
@@ -75,5 +77,12 @@ class WifiConfig(object):
             for network in self.__networks.values():
                 network.save( f )
                 
-                
-
+    @classmethod
+    def ifup(cls):
+        print("Trying /sbin/ifup wlan0 ...",end = "")
+        sys.stdout.flush()
+        status = subprocess.check_call(["/sbin/ifup" , "wlan0"])
+        if status == 0:
+            print("OK")
+        else:
+            print("failed")
