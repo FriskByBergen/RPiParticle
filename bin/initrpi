@@ -20,7 +20,7 @@ import dist
 from device_config import DeviceConfig
 from git_module import GitModule
 from wifi_config import WifiConfig
-
+from service_config import ServiceConfig
 
 
 def configure_wifi():
