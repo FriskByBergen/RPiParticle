@@ -1,4 +1,5 @@
 from __future__ import print_function
+import sys
 import os.path
 import re
 import subprocess
@@ -80,7 +81,7 @@ class WifiConfig(object):
                 
     @classmethod
     def ifup(cls):
-        print("Trying /sbin/ifup wlan0 ...",end = "")
+        print("Trying: /sbin/ifup wlan0 ...",end = "")
         sys.stdout.flush()
         status = subprocess.check_call(["/sbin/ifup" , "wlan0"])
         if status == 0:

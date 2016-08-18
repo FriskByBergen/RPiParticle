@@ -63,6 +63,7 @@ while True:
         
     if config_wifi in ["y","Y"]:
         configure_wifi()
+        print("Wifi configuration saved\n")
         break
     elif config_wifi in ["n","N"]:
         break
