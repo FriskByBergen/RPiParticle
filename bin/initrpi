@@ -31,6 +31,8 @@ def configure_wifi():
             psk_key = raw_input("Password.....: ")
             conf.addnetwork( ssid, psk_key )
             conf.save()
+
+            WifiConfig.ifup( )
             break
         except KeyboardInterrupt:
             break
