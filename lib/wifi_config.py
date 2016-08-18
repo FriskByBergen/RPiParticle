@@ -27,7 +27,7 @@ class Network(object):
 
 
 class WifiConfig(object):
-    network_settings = set(["ssid" , "psk"])
+    network_settings = set(["ssid" , "psk" , "key_mgmt"])
 
     def __init__(self , config_file = "/etc/wpa_supplicant/wpa_supplicant.conf"):
         self.__networks = {}
