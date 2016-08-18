@@ -41,7 +41,7 @@ def configure_wifi():
 
 
 def configure_service(client_path):
-    template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "share/friskby") )
+    template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby") )
     sc = ServiceConfig( template )
     config_file = "/etc/init.d/friskby"
     config_file = "/tmp/init.d_friskby"
