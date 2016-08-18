@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import sys
+import os
 import os.path
+from serial import SerialException
 
 SAMPLE_TIME = 10 * 60
 SAMPLE_TIME = 10
@@ -13,9 +15,16 @@ import dist
 
 from friskby_client import FriskbyClient
 from sampler import Sampler
-from sds011 import SDS011
 from device_config import DeviceConfig
 from git_module import GitModule
+
+if os.getenv("FRISKBY_TEST"):
+    try:
+        from sds011 import SDS011
+    except SerialException:
+        from mock_sds011 import SDS011
+else:
+    from sds011 import SDS011
 
 
 def install(config):
@@ -37,28 +46,31 @@ def restart(config):
 def rollback(config):
     install(config)
 
+def main( argv ):
+    config = DeviceConfig( config_file )
+    config.postGitVersion( )
 
-config = DeviceConfig( config_file )
-config.postGitVersion( )
+    device_id = config.getDeviceID( )
+    client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
+    client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
+    sampler = Sampler( SDS011(True) , sample_time = SAMPLE_TIME , sleep_time = 0.50 )
 
-device_id = config.getDeviceID( )
-client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
-client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
-sampler = Sampler( SDS011(True) , sample_time = SAMPLE_TIME , sleep_time = 0.50 )
-
-while True:
-    print "sampling"
-    data = sampler.collect( )
+    while True:
+        print "sampling"
+        data = sampler.collect( )
     
-    print "Posting"
-    client_pm10.post( data[0].mean() )
-    client_pm25.post( data[1].mean() )
+        print "Posting"
+        client_pm10.post( data[0].mean() )
+        client_pm25.post( data[1].mean() )
 
-    new_config = config.downloadNew( )
-    if new_config != config:
-        try:
-            print "Restarting"
-            restart( new_config )
-        except:
-            rollback( config )
-    
+        new_config = config.downloadNew( )
+        if new_config != config:
+            try:
+                print "Restarting"
+                restart( new_config )
+            except:
+                rollback( config )
+
+
+if __name__ == "__main__":
+    main( sys.argv )
