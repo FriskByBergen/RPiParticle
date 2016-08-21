@@ -50,7 +50,7 @@ def configure_service(client_path):
     mode = os.stat( config_file ).st_mode
     mode |= stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
     os.chmod( config_file , mode )
-    subprocess.check_cell(["systemctl", "daemon-reload"])
+    subprocess.check_call(["systemctl", "daemon-reload"])
 
     print("Service configuration saved in: %s\n" % config_file)
 
