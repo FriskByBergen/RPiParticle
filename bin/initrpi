@@ -50,6 +50,8 @@ def configure_service(client_path):
     mode = os.stat( config_file ).st_mode
     mode |= stat.S_IXUSR | stat.S_IXGRP | stat.S_IXUSR
     os.chmod( config_file , mode )
+    print("Service configuration saved in: %s\n" % config_file)
+
 
 
 def install_requirements( ):
@@ -126,7 +128,6 @@ while True:
         
     if config_service in ["y","Y"]:
         configure_service( os.path.join(ROOT , "bin/fby_client"))
-        print("Service configuration saved\n")
         break
     elif config_service in ["n","N"]:
         break
