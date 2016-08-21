@@ -11,8 +11,7 @@ sys.path.insert(0 , os.path.join(dist_root , "lib"))
 
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
-
-default_ROOT = "/tmp/friskby/testing"
+default_ROOT = "/usr/local/friskby"
 
 
 
