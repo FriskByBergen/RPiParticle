@@ -48,7 +48,7 @@ def configure_service(client_path):
         f.write( sc.render( client_path , "friskby"))
 
     mode = os.stat( config_file ).st_mode
-    mode |= stat.S_IXUSR
+    mode |= stat.S_IXUSR | stat.S_IXGRP | stat.S_IXUSR
     os.chmod( config_file , mode )
 
 
