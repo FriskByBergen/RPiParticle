@@ -3,6 +3,7 @@ import sys
 import requests
 import json
 import os.path
+import stat
 import subprocess
 
 requirements_file = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../requirements.txt" ))
@@ -46,6 +47,9 @@ def configure_service(client_path):
     with open(config_file , "w") as f:
         f.write( sc.render( client_path , "friskby"))
 
+    mode = os.stat( config_file )
+    mode |= stat.S_IXUSR
+    os.chmod( config_file , mode )
 
 
 def install_requirements( ):
