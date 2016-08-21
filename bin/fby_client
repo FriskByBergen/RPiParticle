@@ -5,7 +5,6 @@ import os.path
 from serial import SerialException
 
 SAMPLE_TIME = 10 * 60
-SAMPLE_TIME = 10
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
