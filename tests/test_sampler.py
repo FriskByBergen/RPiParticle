@@ -25,5 +25,5 @@ class SamplerTest(TestCase):
         stop = datetime.datetime.now( )
         
         dt = stop - start
-        self.assertTrue( (dt.total_seconds() - sample_time) <= sleep_time )
+        self.assertTrue( (dt.total_seconds() - sample_time) <= 2*sleep_time )
         
