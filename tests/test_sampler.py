@@ -1,4 +1,5 @@
 import tempfile 
+import datetime
 from unittest import TestCase
 import os.path
 import stat
@@ -15,20 +16,14 @@ except SerialException:
 class SamplerTest(TestCase):
 
     def test_sampler(self):
-        with self.assertRaises(ValueError):
-            sampler = Sampler( SDS011(True) )
+        sample_time = 2
+        sleep_time = 0.10
 
-        with self.assertRaises(ValueError):
-            sampler = Sampler( SDS011(True) , num_sample = 100)
-
-        with self.assertRaises(ValueError):
-            sampler = Sampler( SDS011(True) , num_sample = 100, sleep_time = 10 , sample_time = 100)
-
-        with self.assertRaises(ValueError):
-            sampler = Sampler( SDS011(True) , sample_time = 10 , sleep_time = 100)
-        
-        sampler = Sampler( SDS011(True) , sample_time = 1 , num_sample = 10 )
+        start = datetime.datetime.now()
+        sampler = Sampler( SDS011(True) , sample_time = sample_time , sleep_time = sleep_time )
         data = sampler.collect( )
-        for x in data:
-            self.assertEqual( len(x) , 10 )
-    
+        stop = datetime.datetime.now( )
+        
+        dt = stop - start
+        self.assertTrue( (dt.total_seconds() - sample_time) <= sleep_time )
+        

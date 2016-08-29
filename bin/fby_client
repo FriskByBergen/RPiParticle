@@ -5,6 +5,7 @@ import os.path
 from serial import SerialException
 
 SAMPLE_TIME = 10 * 60
+SLEEP_TIME  = 0.50
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
@@ -52,7 +53,7 @@ def main( argv ):
     device_id = config.getDeviceID( )
     client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
     client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
-    sampler = Sampler( SDS011(True) , sample_time = SAMPLE_TIME , sleep_time = 0.50 )
+    sampler = Sampler( SDS011(True) , SAMPLE_TIME , sleep_time = SLEEP_TIME )
 
     while True:
         print "sampling"
@@ -72,4 +73,5 @@ def main( argv ):
 
 
 if __name__ == "__main__":
+    time.sleep( 10 )
     main( sys.argv )
