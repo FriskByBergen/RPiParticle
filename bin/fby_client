@@ -2,6 +2,7 @@
 import sys
 import os
 import os.path
+import time
 from serial import SerialException
 
 SAMPLE_TIME = 10 * 60
