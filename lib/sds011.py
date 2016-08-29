@@ -22,11 +22,10 @@ class SDS011(object):
         # Read in loop until message start: AAC0
         while True:
             s = self.device.read(1)
-            if len(s) > 0:
-                if ord(s) == SDS011.msg_start:
-                    s = self.device.read(1)
-                    if ord(s) == SDS011.msg_cmd:
-                        break
+            if ord(s) == SDS011.msg_start:
+                s = self.device.read(1)
+                if ord(s) == SDS011.msg_cmd:
+                    break
             time.sleep( SDS011.sleep_time )
 
         s = self.device.read(8)
