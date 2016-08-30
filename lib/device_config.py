@@ -8,7 +8,7 @@ from urlparse import urlparse
 from git_module import GitModule
 
 class DeviceConfig(object):
-    config_timeout = 0
+    config_timeout = 10 * 60
     required_keys = ["git_repo" , "git_ref" , "post_key" , "sensor_list" , "post_path" , "config_path" , "server_url" , "device_id"]
 
     def __init__(self , filename):
@@ -117,5 +117,5 @@ class DeviceConfig(object):
 
         response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
                                 data = json.dumps( data ),
-                                conent_type = "application/json")
+                                content_type = "application/json")
 
