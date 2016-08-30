@@ -5,6 +5,7 @@ import os.path
 from serial import SerialException
 import datetime
 import time
+import requests
 
 SAMPLE_TIME = 10 * 60
 SLEEP_TIME  = 0.50
@@ -45,10 +46,11 @@ def restart(config):
 
 
 def network_block():
+    url = "http://www.google.com"
     timeout = 120
     start = datetime.datetime.now()
     while True:
-        dt = datetime.datetime.now()
+        dt = datetime.datetime.now() - start
         if dt.total_seconds() > timeout:
             sys.exit("No network contact established - giving up")
 
@@ -58,7 +60,6 @@ def network_block():
                 break
         except Exception:
             time.sleep( 2 )
-            
 
 
 
