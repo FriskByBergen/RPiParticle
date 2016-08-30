@@ -3,6 +3,8 @@ import sys
 import os
 import os.path
 from serial import SerialException
+import datetime
+import time
 
 SAMPLE_TIME = 10 * 60
 SLEEP_TIME  = 0.50
