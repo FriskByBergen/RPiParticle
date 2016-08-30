@@ -75,7 +75,7 @@ class DeviceConfig(object):
         update_url = url = "%s/%s" % (self.getServerURL( ) , self.getConfigPath( ))
         try:
             new_config = self.download( update_url )
-            return new_confi
+            return new_config
         except:
             return self
 

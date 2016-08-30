@@ -15,8 +15,6 @@ from git.repo.base import Repo
 from git import GitCommandError, NoSuchPathError, InvalidGitRepositoryError
 
 from git_module import GitModule
-if not on_RPI:
-    GitModule.clone_timeout = 5
 
 def add_file( repo , name, content):
     fname = os.path.join( repo.working_tree_dir , name )

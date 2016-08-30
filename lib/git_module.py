@@ -8,21 +8,9 @@ from git.repo.base import Repo,GitCommandError
 
 
 class GitModule(object):
-    clone_timeout = 90
 
     def clone(self , url):
-        start = datetime.datetime.now()
-        while True:
-            dt = datetime.datetime.now() - start
-            if dt.total_seconds() > self.clone_timeout:
-                raise GitCommandError("clone","Failed to clone - giving up")
-
-            try:
-                self.repo = Repo.clone_from( url , self.work_dir )
-                break
-            except GitCommandError:
-                time.sleep( 5 )
-                
+        self.repo = Repo.clone_from( url , self.work_dir )
 
     
     def __init__(self , **kwargs):
