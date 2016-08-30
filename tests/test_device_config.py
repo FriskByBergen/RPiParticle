@@ -83,12 +83,13 @@ class DeviceConfigTest(TestCase):
         c2 = DeviceConfig( "conf" )
         
         self.assertEqual( c1 , c2 )
-
+        self.assertFalse( c1 != c2 )
 
         c2 = DeviceConfig( "conf2" )
         self.assertFalse( c1 == c2 )
-
-
+        self.assertTrue( c1 != c2 )
+        
+        
 
     @skipUnless(network, "Requires network access")
     def test_url_get(self):

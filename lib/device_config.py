@@ -31,6 +31,12 @@ class DeviceConfig(object):
         else:
             return False
 
+    def __ne__(self ,other):
+        if self == other:
+            return False
+        else:
+            return True
+
 
     def save(self , filename = None):
         if filename is None:
