@@ -2,7 +2,6 @@
 import sys
 import os
 import os.path
-import time
 from serial import SerialException
 
 SAMPLE_TIME = 10 * 60
@@ -74,5 +73,4 @@ def main( argv ):
 
 
 if __name__ == "__main__":
-    time.sleep( 10 )
     main( sys.argv )
