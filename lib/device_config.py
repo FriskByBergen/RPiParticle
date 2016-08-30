@@ -114,8 +114,9 @@ class DeviceConfig(object):
         
         data = {"key"     : self.getPostKey(),
                 "git_ref" : "%s / %s" % git_module.getHead() }
+        headers = {"Content-Type": "application/json"}
 
         response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
-                                data = json.dumps( data ),
-                                content_type = "application/json")
-
+                                data = json.dumps( data ) ,
+                                headers = headers )
+        print response
