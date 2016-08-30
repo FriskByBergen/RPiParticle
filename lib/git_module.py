@@ -1,11 +1,29 @@
+import datetime
+import time
 import os.path
 import tempfile
 import subprocess
 import shutil
-from git.repo.base import Repo
+from git.repo.base import Repo,GitCommandError
 
 
 class GitModule(object):
+    clone_timeout = 90
+
+    def clone(self , url):
+        start = datetime.datetime.now()
+        while True:
+            dt = datetime.datetime.now() - start
+            if dt.total_seconds() > self.clone_timeout:
+                raise GitCommandError("clone","Failed to clone - giving up")
+
+            try:
+                self.repo = Repo.clone_from( url , self.work_dir )
+                break
+            except GitCommandError:
+                time.sleep( 5 )
+                
+
     
     def __init__(self , **kwargs):
         url = kwargs.get("url")
@@ -20,7 +38,7 @@ class GitModule(object):
             
         if url:
             self.work_dir = tempfile.mkdtemp( )
-            self.repo = Repo.clone_from( url , self.work_dir )
+            self.clone( url )
         else:
             self.work_dir = None
             self.repo = Repo( local_path )
