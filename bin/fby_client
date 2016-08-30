@@ -42,14 +42,32 @@ def restart(config):
     raise Exception("Fatal error: os.execl() returned - trying to rollback")
 
 
+def network_block():
+    timeout = 120
+    start = datetime.datetime.now()
+    while True:
+        dt = datetime.datetime.now()
+        if dt.total_seconds() > timeout:
+            sys.exit("No network contact established - giving up")
+
+        try:
+            response = requests.get( url )
+            if response.status_code == 200:
+                break
+        except Exception:
+            time.sleep( 2 )
+            
+
+
 
 def rollback(config):
     install(config)
 
 def main( argv ):
+    network_block( )
     config = DeviceConfig( config_file )
     config.postGitVersion( )
-
+    
     device_id = config.getDeviceID( )
     client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
     client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
