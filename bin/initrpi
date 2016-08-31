@@ -47,7 +47,7 @@ def configure_service(client_path):
         sc.save( client_path )
         sc.enable( True )
 
-        print("Service configuration saved in: %s\n" % sc.configFile())
+        print("Service configuration saved in: %s\n" % sc.config_file)
     else:
         print("Sorry - only systemd can be configured")
 
