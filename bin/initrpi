@@ -44,7 +44,7 @@ def configure_service(client_path):
     if ServiceConfig.systemd():
         template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby.service") )
         sc = ServiceConfig( template )
-        sc.save( )
+        sc.save( client_path )
         sc.enable( True )
 
         print("Service configuration saved in: %s\n" % sc.configFile())
