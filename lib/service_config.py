@@ -4,7 +4,7 @@ import subprocess
 import stat
 
 class ServiceConfig(object):
-    def __init__(self , template_file, config_file = "/etc/systemd/system/friskby.service"):
+    def __init__(self , template_file, name = "friskby", config_file = "/etc/systemd/system/friskby.service"):
         with open(template_file) as fp:
             self.content = fp.read()
 
@@ -12,6 +12,7 @@ class ServiceConfig(object):
             raise ValueError("Missing %(EXECUTABLE)s in template")
 
         self.config_file = config_file
+        self.name = name
 
 
     @classmethod
@@ -35,6 +36,6 @@ class ServiceConfig(object):
 
     def enable(self , start = True):
         subprocess.check_call(["systemctl", "daemon-reload"])
-        subprocess.check_call(["systemctl", "enable" , ""])
+        subprocess.check_call(["systemctl", "enable" , self.name])
         if start:
             subprocess.check_call(["systemctl", "start" , self.name])
