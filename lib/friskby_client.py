@@ -1,7 +1,7 @@
 import datetime
 import requests
 import json
-
+from requests.exceptions import ConnectionError
 
 
 class FriskbyClient(object):
@@ -25,8 +25,12 @@ class FriskbyClient(object):
                     "value"     : pair[1],
                     "key"       : self.device_config.getPostKey( ) }
 
-            respons = requests.post( self.device_config.getPostURL( ) , headers=FriskbyClient.headers, data=json.dumps(data))
-            if respons.status_code != 201:
+            try:
+                respons = requests.post( self.device_config.getPostURL( ) , headers=FriskbyClient.headers, data=json.dumps(data))
+                if respons.status_code != 201:
+                    stack.append( pair )
+                    break
+            except ConnectionError:
                 stack.append( pair )
                 break
                 
