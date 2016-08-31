@@ -3,8 +3,8 @@ import sys
 import requests
 import json
 import os.path
-import stat
 import subprocess
+
 
 requirements_file = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../requirements.txt" ))
 dist_root = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
@@ -41,18 +41,15 @@ def configure_wifi():
 
 
 def configure_service(client_path):
-    template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby") )
-    sc = ServiceConfig( template )
-    config_file = "/etc/init.d/friskby"
-    with open(config_file , "w") as f:
-        f.write( sc.render( client_path , "friskby"))
+    if ServiceConfig.systemd():
+        template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby.service") )
+        sc = ServiceConfig( template )
+        sc.save( )
+        sc.enable( True )
 
-    mode = os.stat( config_file ).st_mode
-    mode |= stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
-    os.chmod( config_file , mode )
-    subprocess.check_call(["systemctl", "daemon-reload"])
-
-    print("Service configuration saved in: %s\n" % config_file)
+        print("Service configuration saved in: %s\n" % sc.configFile())
+    else:
+        print("Sorry - only systemd can be configured")
 
 
 

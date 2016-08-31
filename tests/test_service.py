@@ -22,9 +22,12 @@ class ServiceTest(TestCase):
         with self.assertRaises(ValueError):
             sc = ServiceConfig(template)
 
-        template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby") )
-        sc = ServiceConfig( template )
+        template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby.service") )
+        sc = ServiceConfig( template , config_file = "/tmp/friskby.service")
 
         exe = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "exe") )
-        content = sc.render(exe , "FriskBY")
+        content = sc.save(exe)
         
+
+    def test_is_systemd(self):
+        self.assertEqual( os.path.isdir( "/etc/systemd/system") , ServiceConfig.systemd())
