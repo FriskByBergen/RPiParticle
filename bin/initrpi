@@ -99,7 +99,7 @@ while True:
     print 
 
     config_url = root_url + "%s/%s/" % (sensor_path , device_id)
-    print("Fetching config from:%s " % config_url)
+    print("Fetching config from:%s [NB: Make sure to unlock the %s device.] " % (config_url , device_id))
     
     try:
         config = DeviceConfig.download( config_url )
