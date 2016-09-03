@@ -102,7 +102,7 @@ while True:
         config = DeviceConfig.download( config_url )
         break
     except Exception as e:
-        print("Failed to download configuration: %s\n" % e)
+        print("Failed to download configuration: %s - need to (re)open device on server?\n" % e)
 
     
 
