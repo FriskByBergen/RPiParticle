@@ -11,11 +11,15 @@ class DeviceConfig(object):
     config_timeout = 10 * 60
     required_keys = ["git_repo" , "git_ref" , "post_key" , "sensor_list" , "post_path" , "config_path" , "server_url" , "device_id"]
 
-    def __init__(self , filename):
+    def __init__(self , filename , post_key = None):
         if not os.path.isfile( filename ):
             raise IOError("No such file: %s" % filename)
         
         config = json.load( open(filename) )
+        if not "post_key" in config:
+            if not post_key is None:
+                config["post_key"] = post_key
+            
         for key in self.required_keys:
             if not key in config:
                 raise KeyError("Missing key:%s" % key)
@@ -80,7 +84,7 @@ class DeviceConfig(object):
         self.config_ts = datetime.datetime.now( )
         update_url = url = "%s/%s" % (self.getServerURL( ) , self.getConfigPath( ))
         try:
-            new_config = self.download( update_url )
+            new_config = self.download( update_url , post_key = self.getPostKey())
             return new_config
         except:
             return self
@@ -88,7 +92,7 @@ class DeviceConfig(object):
 
             
     @classmethod
-    def download(cls , url):
+    def download(cls , url , post_key = None):
         response = requests.get( url )
         if response.status_code != 200:
             raise ValueError("http GET return status:%s" % response.status_code)
@@ -101,7 +105,7 @@ class DeviceConfig(object):
         with open(config_file,"w") as f:
             f.write( json.dumps(config) )
             
-        config = DeviceConfig( config_file )
+        config = DeviceConfig( config_file , post_key = post_key)
         os.unlink( config_file ) 
         config.filename = None
         

@@ -19,7 +19,8 @@ class FriskbyClientCTest(TestCase):
 
     @skipUnless(network, "Requires network access")
     def test_client(self):
-        device_config = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPI03/")
+        # The post_key supplied here is not valid for anything, but we pass the "must have post_key test".
+        device_config = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPI03/" , post_key = "Key")
         client = FriskbyClient(device_config , "SensorID")
 
     

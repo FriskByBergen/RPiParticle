@@ -50,6 +50,16 @@ class DeviceConfigTest(TestCase):
 
         with self.assertRaises(KeyError):
             config = DeviceConfig(self.config_file)
+
+        conf_no_key = {"git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , 
+                       "post_path" : "XYZ" , "server_url" : "http:???" , "config_path" : "xyz" , "device_id" : "dev0"}
+        with open(self.config_file , "w") as f:
+            f.write(json.dumps( conf_no_key ))
+
+        with self.assertRaises(KeyError):        
+            config = DeviceConfig( self.config_file )
+
+        config = DeviceConfig( self.config_file , post_key = "Key")
             
         conf = {"git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , "post_key" : "Key",
                 "post_path" : "XYZ" , "server_url" : "http:???" , "config_path" : "xyz" , "device_id" : "dev0"}
@@ -96,6 +106,7 @@ class DeviceConfigTest(TestCase):
         with self.assertRaises(requests.ConnectionError):
             deviceconfig = DeviceConfig.download( "http://does/not/exist")
 
-        deviceconfig = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPI03/")
+        # The post_key supplied here is not valid for anything, but we pass the "must have post_key test".
+        deviceconfig = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPI03/" , post_key = "xxx")
         deviceconfig.save( filename = self.config_file )
 
