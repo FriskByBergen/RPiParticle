@@ -107,6 +107,6 @@ class DeviceConfigTest(TestCase):
             deviceconfig = DeviceConfig.download( "http://does/not/exist")
 
         # The post_key supplied here is not valid for anything, but we pass the "must have post_key test".
-        deviceconfig = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPI03/" , post_key = "xxx")
+        deviceconfig = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPITest/" , post_key = "xxx")
         deviceconfig.save( filename = self.config_file )
 
