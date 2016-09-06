@@ -28,10 +28,10 @@ class FriskbyClient(object):
             try:
                 respons = requests.post( self.device_config.getPostURL( ) , headers=FriskbyClient.headers, data=json.dumps(data))
                 if respons.status_code != 201:
-                    stack.append( pair )
+                    self.stack.append( pair )
                     break
             except ConnectionError:
-                stack.append( pair )
+                self.stack.append( pair )
                 break
                 
             if len(self.stack) == 0:

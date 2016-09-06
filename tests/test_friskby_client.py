@@ -7,6 +7,9 @@ import requests
 import imp
 from friskby_client import FriskbyClient
 from device_config import DeviceConfig
+from friskby_client import FriskbyClient
+from context import TestContext
+
 
 try:
     response = requests.get("https://github.com")
@@ -16,6 +19,9 @@ except Exception:
 
 
 class FriskbyClientCTest(TestCase):
+
+    def setUp(self):
+        self.context = TestContext()
 
     @skipUnless(network, "Requires network access")
     def test_client(self):
@@ -32,4 +38,16 @@ class FriskbyClientCTest(TestCase):
         client = imp.load_source( "client" , client_path )
         client.network_block( )
         del os.environ["FRISKBY_TEST"]
-        
+
+    @skipUnless(network, "Requires network access")
+    def test_post(self):
+        client = FriskbyClient( self.context.device_config  , self.context.sensor_id )
+        client.post( 0.0 )
+        url = self.context.device_config.data["server_url"]
+        self.context.device_config.data["server_url"] = "https://friskby.herokuapp.comXXX"
+        client.post(1.0)
+        client.post(2.0)
+        self.assertEqual( len(client.stack) , 2 )
+        self.context.device_config.data["server_url"] = url
+        client.post(3.0)
+        self.assertEqual( len(client.stack) , 0 )
