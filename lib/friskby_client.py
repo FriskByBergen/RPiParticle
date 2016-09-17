@@ -30,7 +30,7 @@ class FriskbyClient(object):
                 if respons.status_code != 201:
                     self.stack.append( pair )
                     break
-            except ConnectionError:
+            except:
                 self.stack.append( pair )
                 break
                 
