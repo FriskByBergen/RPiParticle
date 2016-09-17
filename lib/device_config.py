@@ -123,4 +123,3 @@ class DeviceConfig(object):
         response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
                                 data = json.dumps( data ) ,
                                 headers = headers )
-        print response
