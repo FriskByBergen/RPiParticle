@@ -90,6 +90,13 @@ class GitModule(object):
             os.makedirs( target )
 
         for dir in directories:
+            repo_path = os.path.join( self.getRoot() , dir)
+            if not os.path.exists( repo_path ):
+                target_path = os.path.join( target , dir)
+                if not os.path.isdir( target_path ):
+                    os.makedirs( target_path )
+                continue
+
             if os.path.dirname( dir ):
                 target_path = os.path.join( target , os.path.dirname( dir ))
                 if not os.path.isdir( target_path ):

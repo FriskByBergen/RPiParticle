@@ -7,6 +7,7 @@ files = ["bin/fby_client",
          "lib/sds011.py",
          "lib/friskby_client.py"]
 
-directories = []
+directories = ["var",
+               "etc"]
 
 

@@ -189,4 +189,8 @@ class GitModuleTest(TestCase):
         gitm.install( target , 
                       directories = ["tests"],
                       files = ["tests/run_OK", "tests/run_fail"])
-    
+
+        gitm.install( target , 
+                      directories = ["does_not_exist/22"])
+        self.assertTrue( os.path.isdir( os.path.join( target , "does_not_exist/22")))
+        
