@@ -10,3 +10,6 @@ class TestContext(object):
 
         self.device_config = DeviceConfig.download( "%s/%s" % (self.server_url , self.post_path) , post_key = self.post_key)
         self.sensor_id = "FriskPITest_PM10"
+
+        self.device_config_broken = DeviceConfig.download( "%s/%s" % (self.server_url , self.post_path) , post_key = self.post_key)
+        self.device_config_broken.data["server_url"] = "http://invalid.no"
