@@ -13,6 +13,7 @@ SLEEP_TIME  = 0.50
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
 config_file = os.path.join( ROOT , "etc/config.json")
+var_path = os.path.join(ROOT , "var")
 
 import dist
 
@@ -72,8 +73,8 @@ def main( argv ):
     config.postGitVersion( )
     
     device_id = config.getDeviceID( )
-    client_pm10 = FriskbyClient(config , "%s_PM10" % device_id)
-    client_pm25 = FriskbyClient(config , "%s_PM25" % device_id)
+    client_pm10 = FriskbyClient(config , "%s_PM10" % device_id, var_path)
+    client_pm25 = FriskbyClient(config , "%s_PM25" % device_id, var_path)
     sampler = Sampler( SDS011(True) , SAMPLE_TIME , sleep_time = SLEEP_TIME )
 
     while True:
