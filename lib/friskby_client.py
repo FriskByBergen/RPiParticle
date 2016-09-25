@@ -36,7 +36,6 @@ class FriskbyClient(object):
 
             if respons.status_code != 201:
                 self.stack.append( (timestamp , value) )
-                break
         except:
             self.stack.append( (timestamp , value) )
 
