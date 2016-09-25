@@ -59,24 +59,28 @@ class FriskbyClientCTest(TestCase):
 
         fname = "/tmp/%s" % self.context.sensor_id
         with open(fname , "w") as f:
-            data = [(0,100),(1,200)]
+            data = [(1,111),(2,222)]
             f.write( json.dumps( data ))
 
         client = FriskbyClient( self.context.device_config_broken  , self.context.sensor_id , "/tmp" )
         client.post(1.0)
-        self.assertFalse( os.path.isfile( fname ))
         self.assertTrue( len(client.stack), 3)
-        self.assertEqual( client.stack[0][0] , 0 )
-        self.assertEqual( client.stack[1][0] , 1 )
-        self.assertEqual( client.stack[0][1] , 100 )
-        self.assertEqual( client.stack[1][1] , 200 )
+        self.assertEqual( client.stack[0][0] , 1 )
+        self.assertEqual( client.stack[1][0] , 2 )
+        self.assertEqual( client.stack[0][1] , 111 )
+        self.assertEqual( client.stack[1][1] , 222 )
         self.assertEqual( client.stack[2][1] , 1.0 )
 
 
 
     @skipUnless(network, "Requires network access")
     def test_post(self):
+        fname = "/tmp/%s" % self.context.sensor_id
+        if os.path.isfile( fname ):
+            os.unlink( fname )
+
         client = FriskbyClient( self.context.device_config  , self.context.sensor_id , "/tmp")
+        self.assertEqual( len(client.stack), 0)
         client.post( 0.0 )
         url = self.context.device_config.data["server_url"]
         self.context.device_config.data["server_url"] = "https://friskby.herokuapp.comXXX"

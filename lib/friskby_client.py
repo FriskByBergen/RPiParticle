@@ -22,8 +22,7 @@ class FriskbyClient(object):
             os.unlink( self.cache_file )
 
 
-    def post_value(self , value):
-        timestamp = datetime.datetime.utcnow().isoformat()
+    def post_value(self , timestamp , value):
         try:
             data = {"timestamp" : timestamp,
                     "sensorid"  : self.sensor_id,
@@ -41,8 +40,7 @@ class FriskbyClient(object):
 
 
     def post_stack(self):
-        data = {"timestamp"  : timestamp,
-                "sensorid"   : self.sensor_id,
+        data = {"sensorid"   : self.sensor_id,
                 "value_list" : self.stack,
                 "key"        : self.device_config.getPostKey( ) }
 
@@ -67,8 +65,11 @@ class FriskbyClient(object):
             
 
     def post(self , value):
+        timestamp = datetime.datetime.utcnow().isoformat()
         if len(self.stack) == 0:
-            self.post_value( value )
+            self.post_value( timestamp, value )
+        else:
+            self.stack.append( (timestamp , value) )
 
         if len(self.stack) > 0:
             self.post_stack( )
