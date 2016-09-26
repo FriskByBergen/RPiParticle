@@ -62,10 +62,9 @@ class GitModule(object):
         self.repo.git.checkout( ref )
 
 
-    def getHead(self):
-        head = self.repo.heads[0]
-        return (head.name , head.commit)
-
+    def getHeadSHA(self):
+        commit = self.repo.commit("HEAD")
+        return commit.hexsha
 
     def runTests(self , cmd):
         full_cmd = self.absPath( cmd )

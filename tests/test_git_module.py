@@ -124,7 +124,6 @@ class GitModuleTest(TestCase):
         
         gitm.checkout( "master" )
         self.assertEqual( os.path.join( gitm.getRoot( ) , "file.txt" ) , gitm.absPath("file.txt") )
-        self.assertEqual( gitm.getHead( )[0] , "master" )
 
 
         with self.assertRaises( IOError ):
