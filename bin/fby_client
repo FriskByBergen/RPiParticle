@@ -90,7 +90,8 @@ def main( argv ):
             try:
                 print "Restarting"
                 restart( new_config )
-            except:
+            except Exception as exc:
+                sys.stderr.write("Restart failed: %s" % exc)
                 rollback( config )
 
 
