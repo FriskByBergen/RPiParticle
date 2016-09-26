@@ -114,7 +114,7 @@ class DeviceConfig(object):
 
     def postGitVersion(self):
         data = {"key"     : self.getPostKey(),
-                "git_ref" : self.getGitRef() }
+                "git_ref" : "%s / %s" % git_module.getHeadSHA() }
         headers = {"Content-Type": "application/json"}
 
         response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
