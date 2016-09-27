@@ -15,6 +15,7 @@ and restart itself.
 1. Log in to the Raspberry PI and download the code with:
 
      cd /tmp
+     
      git clone https://github.com/FriskByBergen/RPiParticle
 
    Observe that the code downloaded with this git clone command is
@@ -25,6 +26,7 @@ and restart itself.
 2. Run the bin/initrpi script:
 
      cd RPiParticle/bin
+     
      sudo ./initrpi
 
     The initrpi script consist of three different parts:
