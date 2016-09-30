@@ -12,7 +12,16 @@ and restart itself.
 
 ### Installation
 
-1. Log in to the Raspberry PI and download the code with:
+1. Install the required dependencies. The friskby_client is heavily
+   based on git - and you must have installed that with:
+
+      sudo apt-get install git
+
+   before proceeding with the installation and configuration of the
+   friskby client.
+
+
+2. Log in to the Raspberry PI and download the code with:
 
      cd /tmp
      
@@ -23,7 +32,19 @@ and restart itself.
    therefor important that the git clone commands is performed in a
    temporary location in the filesystem.
 
-2. Run the bin/initrpi script:
+
+3. Run the bin/install-deps.sh script, this will install the
+   non-standard Python packages reuired by the friskby client. This
+   script should only be run once:
+
+     cd RPiParticle/bin
+
+     sudo ./install-deps.sh
+
+
+
+
+4. Run the bin/initrpi script:
 
      cd RPiParticle/bin
      
@@ -31,16 +52,15 @@ and restart itself.
 
     The initrpi script consist of three different parts:
 
-    1. It will install all the required dependencies with 'pip
-       install'.
+      a) It will optionally configure WiFi on the Raspberry PI.
 
-    2. It will optionally configure WiFi on the Raspberry PI.
+      b) It will query the user for a device ID and then query the
+         Webserver for configuration of that device ID, download and
+         test the code, and install it.
 
-    3. It will query the user for a device ID and then query the
-       Webserver for configuration of that device ID, download and
-       test the code, and install it.
-
-
+      c) It will install the client code as a systemd service.
+ 
+    It is perfectly OK to run the bin/initrpi script repeatedly.
      
 
 
