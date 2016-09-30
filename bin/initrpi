@@ -6,7 +6,6 @@ import os.path
 import subprocess
 
 
-requirements_file = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../requirements.txt" ))
 dist_root = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(dist_root , "lib"))
 
@@ -53,21 +52,6 @@ def configure_service(client_path):
 
 
 
-def install_requirements( ):
-    if not os.path.exists( requirements_file ):
-        sys.exit("The requiremenents file:%s was no found" % requirements_file )
-        
-    print("Installing requirements from: %s" % requirements_file )
-
-    with open(os.devnull , "wb") as dev_null:
-        status = subprocess.call(["pip", "install", "-r", requirements_file ] , stdout = dev_null, stderr = None)
-    if status != 0:
-        msg = "Failed to install requirements. Need to run as sudo ?"
-        sys.exit(msg)
-        
-    
-
-install_requirements()
 
 while True:
     config_wifi = raw_input("Configure wifi [y/N]: ")
