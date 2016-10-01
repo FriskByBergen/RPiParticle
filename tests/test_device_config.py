@@ -8,6 +8,8 @@ import os.path
 import stat
 
 from device_config import DeviceConfig
+from context import TestContext
+        
 
 try:
     response = requests.get("https://github.com")
@@ -23,7 +25,7 @@ class DeviceConfigTest(TestCase):
         os.close(fd)
 
         self.tmpdir = tempfile.mkdtemp( )
-        
+        self.context = TestContext( )
 
     def tearDown(self):
         if os.path.isfile( self.config_file ):
@@ -109,4 +111,10 @@ class DeviceConfigTest(TestCase):
         # The post_key supplied here is not valid for anything, but we pass the "must have post_key test".
         deviceconfig = DeviceConfig.download( "https://friskby.herokuapp.com/sensor/api/device/FriskPITest/" , post_key = "xxx")
         deviceconfig.save( filename = self.config_file )
+
+
+    @skipUnless(network, "Requires network access")
+    def test_post_msg(self):
+        status = self.context.device_config.logMessage( "Testing" )
+        self.assertEqual( status ,  201 )
 
