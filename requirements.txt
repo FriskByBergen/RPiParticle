@@ -1,6 +1,5 @@
 requests
 gitpython
 pyserial
-pytz
 
 
