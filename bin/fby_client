@@ -70,6 +70,7 @@ def rollback(config):
 def main( argv ):
     network_block( )
     config = DeviceConfig( config_file )
+    config.logMessage("Starting up")
     config.postGitVersion( )
     
     device_id = config.getDeviceID( )
@@ -78,22 +79,20 @@ def main( argv ):
     sampler = Sampler( SDS011(True) , SAMPLE_TIME , sleep_time = SLEEP_TIME )
 
     while True:
-        print "sampling"
         data = sampler.collect( )
     
-        print "Posting"
         client_pm10.post( data[0].mean() )
         client_pm25.post( data[1].mean() )
 
         new_config = config.downloadNew( )
         if new_config != config:
             try:
-                print "Restarting"
+                config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
                 restart( new_config )
             except Exception as exc:
-                sys.stderr.write("Restart failed: %s" % exc)
+                config.logMessage("Restart failed - trying rollback")
                 rollback( config )
-
+                config.logMessage("Rollback complete")
 
 if __name__ == "__main__":
     main( sys.argv )

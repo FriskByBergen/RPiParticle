@@ -110,7 +110,18 @@ class DeviceConfig(object):
         config.filename = None
         
         return config
-        
+
+    def logMessage( self , msg):
+        data = {"key"     : self.getPostKey(),
+                "device_id" : self.getDeviceID() ,
+                "msg" : msg}
+        headers = {"Content-Type": "application/json"}
+        response = requests.post("%s/sensor/api/client_log/" % self.getServerURL(),
+                                 data = json.dumps( data ) ,
+                                 headers = headers )
+        return response.status_code
+
+
 
     def postGitVersion(self):
         try:
