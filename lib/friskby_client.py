@@ -65,7 +65,8 @@ class FriskbyClient(object):
             
 
     def post(self , value):
-        timestamp = datetime.datetime.utcnow().isoformat()
+        #Manually attached timezone
+        timestamp = datetime.datetime.utcnow().isoformat() + "+00:00"
         if len(self.stack) == 0:
             self.post_value( timestamp, value )
         else:
