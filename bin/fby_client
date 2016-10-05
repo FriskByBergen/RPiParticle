@@ -79,20 +79,30 @@ def main( argv ):
     sampler = Sampler( SDS011(True) , SAMPLE_TIME , sleep_time = SLEEP_TIME )
 
     while True:
-        data = sampler.collect( )
+        try:
+            data = sampler.collect( )
     
-        client_pm10.post( data[0].mean() )
-        client_pm25.post( data[1].mean() )
+            client_pm10.post( data[0].mean() )
+            client_pm25.post( data[1].mean() )
 
-        new_config = config.downloadNew( )
-        if new_config != config:
-            try:
-                config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
-                restart( new_config )
-            except Exception as exc:
-                config.logMessage("Restart failed - trying rollback")
-                rollback( config )
-                config.logMessage("Rollback complete")
+            new_config = config.downloadNew( )
+            if new_config != config:
+                try:
+                    config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
+                    restart( new_config )
+                except Exception as exc:
+                    config.logMessage("Restart failed - trying rollback")
+                    rollback( config )
+                    config.logMessage("Rollback complete")
+        except KeyboardInterrupt as e:
+            # KeyboardInterrupt - i.e. Ctrl-C is special cased to 
+            # make sure we can interrupt a running client manually.
+            raise
+        except Exception as a:
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            tb_list = traceback.format_exception( exc_type , exc_value , exc_tb)
+            config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
+            
 
 if __name__ == "__main__":
     main( sys.argv )

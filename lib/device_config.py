@@ -111,10 +111,13 @@ class DeviceConfig(object):
         
         return config
 
-    def logMessage( self , msg):
+    def logMessage( self , msg , long_msg = None):
         data = {"key"     : self.getPostKey(),
                 "device_id" : self.getDeviceID() ,
                 "msg" : msg}
+        if long_msg:
+            data["long_msg"] = long_msg
+
         headers = {"Content-Type": "application/json"}
         response = requests.post("%s/sensor/api/client_log/" % self.getServerURL(),
                                  data = json.dumps( data ) ,
