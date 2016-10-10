@@ -6,6 +6,7 @@ from serial import SerialException
 import datetime
 import time
 import requests
+from traceback import format_exception
 
 SAMPLE_TIME = 10 * 60
 SLEEP_TIME  = 0.50
@@ -100,7 +101,7 @@ def main( argv ):
             raise
         except Exception as a:
             exc_type, exc_value, exc_tb = sys.exc_info()
-            tb_list = traceback.format_exception( exc_type , exc_value , exc_tb)
+            tb_list = format_exception( exc_type , exc_value , exc_tb)
             config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
             
 
