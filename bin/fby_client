@@ -9,6 +9,7 @@ import requests
 from traceback import format_exception
 
 SAMPLE_TIME = 10 * 60
+EXCEPTION_SLEEP_TIME = 10 * 60
 SLEEP_TIME  = 0.50
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
@@ -103,6 +104,8 @@ def main( argv ):
             exc_type, exc_value, exc_tb = sys.exc_info()
             tb_list = format_exception( exc_type , exc_value , exc_tb)
             config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
+            time.sleep( EXCEPTION_SLEEP_TIME )
+
             
 
 if __name__ == "__main__":
