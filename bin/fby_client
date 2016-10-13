@@ -1,29 +1,23 @@
 #!/usr/bin/env python
 import sys
 import os
-import os.path
 from serial import SerialException
 import datetime
 import time
 import requests
 from traceback import format_exception
 
-SAMPLE_TIME = 10 * 60
-SLEEP_TIME  = 0.50
-EXCEPTION_COUNT = 0 #  #exceptions since last success
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
-config_file = os.path.join( ROOT , "etc/config.json")
-var_path = os.path.join(ROOT , "var")
+CONFIG_FILE = os.path.join( ROOT , "etc/config.json")
+VAR_PATH = os.path.join(ROOT , "var")
 
 import dist
-
 from friskby_client import FriskbyClient
 from sampler import Sampler
 from device_config import DeviceConfig
 from git_module import GitModule
-
 if os.getenv("FRISKBY_TEST"):
     try:
         from sds011 import SDS011
@@ -33,110 +27,115 @@ else:
     from sds011 import SDS011
 
 
-def install(config):
-    git_module = GitModule( url = config.getRepoURL() )
-    git_module.checkout( config.getGitRef( ) )
-    git_module.runTests( "tests/run_tests" )
-    git_module.install( ROOT , files = dist.files , directories = dist.directories )
-    config.save( filename = config_file )
+class FbyRunner():
+
+    def __init__(self, argv):
+        self._sample_time = 10 * 60
+        self._sleep_time  = 0.50
+        self._exception_count = 0 #  #exceptions since last success
+
+    def install(self, config):
+        git_module = GitModule( url = config.getRepoURL() )
+        git_module.checkout( config.getGitRef( ) )
+        git_module.runTests( "tests/run_tests" )
+        git_module.install( ROOT , files = dist.files , directories = dist.directories )
+        config.save( filename = CONFIG_FILE )
 
 
-def restart(config):
-    install(config)
-    os.execl( __file__ , __file__)
+    def restart(self, config):
+        self.install(config)
+        os.execl( __file__ , __file__)
 
-    raise Exception("Fatal error: os.execl() returned - trying to rollback")
+        raise Exception("Fatal error: os.execl() returned - trying to rollback")
 
 
-def network_block():
-    url = "http://www.google.com"
-    timeout = 120
-    start = datetime.datetime.now()
-    while True:
-        dt = datetime.datetime.now() - start
-        if dt.total_seconds() > timeout:
-            sys.exit("No network contact established - giving up")
+    def network_block(self):
+        url = "http://www.google.com"
+        timeout = 120
+        start = datetime.datetime.now()
+        while True:
+            dt = datetime.datetime.now() - start
+            if dt.total_seconds() > timeout:
+                sys.exit("No network contact established - giving up")
 
+            try:
+                response = requests.get( url )
+                if response.status_code == 200:
+                    break
+            except Exception:
+                time.sleep( 2 )
+
+
+
+    def rollback(self, config):
+        self.install(config)
+
+    def collect(self, sampler):
+        data = None
         try:
-            response = requests.get( url )
-            if response.status_code == 200:
-                break
-        except Exception:
-            time.sleep( 2 )
+            data = sampler.collect( )
+        except SerialException as se:
+            if self._exception_count < 5:
+                config.logMessage('Exception while collecting: %s' % str(se))
+            self._exception_count += 1
+            sys.stderr.write('Exception in collect %d\n' % self._exception_count)
+            sys.stderr.write('Exception in collect %s\n' % str(se))
+        return data
+
+    def post(self, client_pm10, client_pm25, data):
+        client_pm10.post( data[0].mean() )
+        client_pm25.post( data[1].mean() )
 
 
+    def updateClient(self):
+        new_config = config.downloadNew( )
+        if new_config != config:
+            try:
+                config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
+                self.restart( new_config )
+            except Exception as exc:
+                config.logMessage("Restart failed - trying rollback")
+                rollback( config )
+                config.logMessage("Rollback complete")
 
-def rollback(config):
-    install(config)
+    def run(self):
+        self.network_block( )
+        config = DeviceConfig( CONFIG_FILE )
+        config.logMessage("Starting up")
+        config.postGitVersion( )
 
-def collect():
-    data = None
-    try:
-        data = sampler.collect( )
-    except SerialException as se:
-        if EXCEPTION_COUNT < 5:
-            config.logMessage('Exception while collecting: %s' % str(se))
-        EXCEPTION_COUNT += 1
-    return data
+        device_id = config.getDeviceID( )
+        client_pm10 = FriskbyClient(config , "%s_PM10" % device_id, VAR_PATH)
+        client_pm25 = FriskbyClient(config , "%s_PM25" % device_id, VAR_PATH)
+        sampler = Sampler( SDS011(True) , self._sample_time , sleep_time = self._sleep_time )
 
-def post(client_pm10, client_pm25, data):
-    client_pm10.post( data[0].mean() )
-    client_pm25.post( data[1].mean() )
+        while True:
+            if self._exception_count >= 5:
+                time.sleep(30)
+            try:
+                data = self.collect(sampler)
+                if not data:
+                    continue
 
+                self.post(client_pm10, client_pm25, data)
 
-def updateClient():
-    new_config = config.downloadNew( )
-    if new_config != config:
-        try:
-            config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
-            restart( new_config )
-        except Exception as exc:
-            config.logMessage("Restart failed - trying rollback")
-            rollback( config )
-            config.logMessage("Rollback complete")
+                self.updateClient()
 
+            except KeyboardInterrupt as e:
+                # KeyboardInterrupt - i.e. Ctrl-C is special cased to
+                # make sure we can interrupt a running client manually.
+                raise
+            except Exception as a:
+                exc_type, exc_value, exc_tb = sys.exc_info()
+                tb_list = format_exception( exc_type , exc_value , exc_tb)
+                if self._exception_count < 5:
+                    config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
+                self._exception_count += 1
+            else:
+                # try/except/else: if nothing has been raised we successfully posted
+                self._exception_count = 0
 
-def main( argv ):
-    network_block( )
-    config = DeviceConfig( config_file )
-    config.logMessage("Starting up")
-    config.postGitVersion( )
-    
-    device_id = config.getDeviceID( )
-    client_pm10 = FriskbyClient(config , "%s_PM10" % device_id, var_path)
-    client_pm25 = FriskbyClient(config , "%s_PM25" % device_id, var_path)
-    sampler = Sampler( SDS011(True) , SAMPLE_TIME , sleep_time = SLEEP_TIME )
-
-    while True:
-        if EXCEPTION_COUNT >= 5:
-            # sleep exponentially long, but at most a day
-            timeout = 2**EXCEPTION_COUNT * 60
-            day = 3600 * 24
-            time.sleep(min(timeout, day))
-
-        try:
-            data = collect(sampler)
-            if not data:
-                continue
-
-            post(client_pm10, client_pm25, data)
-
-            updateClient()
-
-        except KeyboardInterrupt as e:
-            # KeyboardInterrupt - i.e. Ctrl-C is special cased to 
-            # make sure we can interrupt a running client manually.
-            raise
-        except Exception as a:
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            tb_list = format_exception( exc_type , exc_value , exc_tb)
-            if EXCEPTION_COUNT < 5:
-                config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
-            EXCEPTION_COUNT += 1
-        else:
-            # try/except/else: if nothing has been raised we successfully posted
-            EXCEPTION_COUNT = 0
-            
 
 if __name__ == "__main__":
-    main( sys.argv )
+    fby = FbyRunner( sys.argv )
+    fby.run()
