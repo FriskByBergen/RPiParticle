@@ -74,7 +74,8 @@ def collect():
     try:
         data = sampler.collect( )
     except SerialException as se:
-        config.logMessage('Exception while collecting: %s' % str(se))
+        if EXCEPTION_COUNT < 5:
+            config.logMessage('Exception while collecting: %s' % str(se))
         EXCEPTION_COUNT += 1
     return data
 
@@ -83,7 +84,7 @@ def post(client_pm10, client_pm25, data):
     client_pm25.post( data[1].mean() )
 
 
-def downloadConfig():
+def updateClient():
     new_config = config.downloadNew( )
     if new_config != config:
         try:
@@ -115,12 +116,12 @@ def main( argv ):
 
         try:
             data = collect(sampler)
-            if data is None:
+            if not data:
                 continue
 
             post(client_pm10, client_pm25, data)
 
-            downloadConfig()
+            updateClient()
 
         except KeyboardInterrupt as e:
             # KeyboardInterrupt - i.e. Ctrl-C is special cased to 
@@ -129,7 +130,9 @@ def main( argv ):
         except Exception as a:
             exc_type, exc_value, exc_tb = sys.exc_info()
             tb_list = format_exception( exc_type , exc_value , exc_tb)
-            config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
+            if EXCEPTION_COUNT < 5:
+                config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
+            EXCEPTION_COUNT += 1
         else:
             # try/except/else: if nothing has been raised we successfully posted
             EXCEPTION_COUNT = 0
