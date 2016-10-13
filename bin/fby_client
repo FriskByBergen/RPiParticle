@@ -70,6 +70,7 @@ def rollback(config):
     install(config)
 
 def collect():
+    global EXCEPTION_COUNT
     data = None
     try:
         data = sampler.collect( )
@@ -97,6 +98,7 @@ def updateClient():
 
 
 def main( argv ):
+    global EXCEPTION_COUNT
     network_block( )
     config = DeviceConfig( config_file )
     config.logMessage("Starting up")
