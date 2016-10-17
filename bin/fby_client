@@ -27,7 +27,7 @@ else:
     from sds011 import SDS011
 
 
-class FbyRunner():
+class FbyRunner(object):
 
     def __init__(self, argv):
         self._sample_time = 10 * 60

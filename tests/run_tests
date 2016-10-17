@@ -2,6 +2,7 @@
 import sys
 import os
 import os.path
+from serial import SerialException
 from unittest import TestLoader,TextTestRunner
 
 TEST_PYTHONPATH = "%s:%s" % (os.path.abspath( os.path.join( os.path.dirname(__file__) , "../lib") ) , os.path.abspath( os.path.dirname( __file__)))
@@ -10,6 +11,10 @@ os.environ["PYTHONPATH"] = TEST_PYTHONPATH + os.pathsep + os.getenv("PYTHONPATH"
 for path_element in reversed(TEST_PYTHONPATH.split(os.pathsep)):
     sys.path.insert(0, path_element)
 
+try:
+    from sds011 import SDS011
+except SerialException:
+    os.environ["FRISKBY_TEST"] = "True"
 
 
 def findTestsInDirectory(path, recursive=True , pattern = "test*.py"):
