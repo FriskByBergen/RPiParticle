@@ -56,6 +56,18 @@ class FbyRunner(object):
 
         raise Exception("Fatal error: os.execl() returned - trying to rollback")
 
+    @classmethod
+    def updateClient(cls, config):
+        new_config = config.downloadNew( )
+        if new_config != config:
+            try:
+                config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
+                cls.restart( new_config )
+            except Exception as exc:
+                config.logMessage("Restart failed - trying rollback")
+                cls.rollback( config )
+                config.logMessage("Rollback complete")
+
 
     def collect(self, sampler):
         data = None
@@ -69,21 +81,11 @@ class FbyRunner(object):
             sys.stderr.write('Exception in collect %s\n' % str(se))
         return data
 
+
     def post(self, client_pm10, client_pm25, data):
         client_pm10.post( data[0].mean() )
         client_pm25.post( data[1].mean() )
 
-
-    def updateClient(self):
-        new_config = config.downloadNew( )
-        if new_config != config:
-            try:
-                config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
-                self.restart( new_config )
-            except Exception as exc:
-                config.logMessage("Restart failed - trying rollback")
-                rollback( config )
-                config.logMessage("Rollback complete")
 
     def run(self):
         network_block( )
