@@ -34,8 +34,9 @@ class FbyRunner():
         self._sleep_time  = 0.50
         self._exception_count = 0 #  #exceptions since last success
 
+
     @staticmethod
-    def install(self, config):
+    def install(config):
         git_module = GitModule( url = config.getRepoURL() )
         git_module.checkout( config.getGitRef( ) )
         git_module.runTests( "tests/run_tests" )
@@ -43,17 +44,18 @@ class FbyRunner():
         config.save( filename = CONFIG_FILE )
 
 
-    @staticmethod
-    def restart(self, config):
-        self.install(config)
+    @classmethod
+    def rollback(cls, config):
+        cls.install(config)
+
+
+    @classmethod
+    def restart(cls, config):
+        cls.install(config)
         os.execl( __file__ , __file__)
 
         raise Exception("Fatal error: os.execl() returned - trying to rollback")
 
-
-    @staticmethod
-    def rollback(self, config):
-        self.install(config)
 
     def collect(self, sampler):
         data = None
