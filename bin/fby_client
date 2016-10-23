@@ -83,9 +83,8 @@ class FbyRunner(object):
 
 
     def post(self, client_pm10, client_pm25, data):
-        client_pm10.post( data[0].mean() )
-        client_pm25.post( data[1].mean() )
-
+        client_pm10.post( data[0].median() )
+        client_pm25.post( data[1].median() )
 
     def run(self):
         network_block( )
