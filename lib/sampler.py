@@ -4,10 +4,11 @@ from ts import TS
 
 class Sampler(object):
     
-    def __init__(self, reader, sample_time , sleep_time = 0.10):
+    def __init__(self, reader, sample_time , sleep_time = 0.10, accuracy = None):
         self.reader = reader
         self.sample_time = sample_time
         self.sleep_time = sleep_time
+        self.accuracy = accuracy
 
 
     def collect(self):
@@ -17,7 +18,7 @@ class Sampler(object):
             values = self.reader.read( )
             if len(data) == 0:
                 for x in range(len(values)):
-                    data.append( TS() )
+                    data.append( TS(accuracy=self.accuracy) )
                 
             for index,v in enumerate(values):
                 data[index].append( v )

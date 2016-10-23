@@ -3,17 +3,22 @@ class TS(object):
 
     Remarkably close to just being a list.  But has mean() and median().
 
+    Set accuracy = 3 to get rounding to third decimal.
     """
 
-    def __init__(self, data = None):
+    def __init__(self, data = None, accuracy=None):
         self.data = []
+        self.accuracy = accuracy
         if data:
-            self.data = [x for x in data]
+            for x in data:
+                self.append(x)
 
     def __len__(self):
         return len(self.data)
 
     def append(self , d):
+        if self.accuracy:
+            d = round(d, self.accuracy)
         self.data.append( d )
 
     def __repr__(self):
@@ -22,15 +27,15 @@ class TS(object):
     def __str__(self):
         if len(self) < 10:
             return str(self.data)
-        tmp1 = self.data[:4]
-        tmp2 = self.data[-4:]
-        return 'TS[%f %f %f %f ... %f %f %f %f]' % (tmp1[0], tmp1[1], tmp1[2], tmp1[3],
-                                                    tmp2[0], tmp2[1], tmp2[2], tmp2[3])
+        tmp = self.data[:4]
+        tmp += self.data[-4:]
+        fmt = 'TS[{}, {}, {}, {}, ..., {}, {}, {}, {}]'
+        return fmt.format(*tmp)
 
     def mean(self):
         if len(self) == 0:
             raise ValueError('Arithmetic mean of empty time series.')
-        return sum(self.data) / len(self)
+        return sum(self.data) / float(len(self))
 
     def median(self):
         if len(self) == 0:
