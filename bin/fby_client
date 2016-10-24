@@ -33,7 +33,7 @@ class FbyRunner(object):
         self._sample_time = 10 * 60
         self._sleep_time  = 0.50
         self._exception_count = 0 #  #exceptions since last success
-
+        self._accuracy = 4 # round observation to fourth digit
 
     @staticmethod
     def install(config):
@@ -83,9 +83,8 @@ class FbyRunner(object):
 
 
     def post(self, client_pm10, client_pm25, data):
-        client_pm10.post( data[0].mean() )
-        client_pm25.post( data[1].mean() )
-
+        client_pm10.post( data[0].median() )
+        client_pm25.post( data[1].median() )
 
     def run(self):
         network_block( )
@@ -96,7 +95,7 @@ class FbyRunner(object):
         device_id = config.getDeviceID( )
         client_pm10 = FriskbyClient(config , "%s_PM10" % device_id, VAR_PATH)
         client_pm25 = FriskbyClient(config , "%s_PM25" % device_id, VAR_PATH)
-        sampler = Sampler( SDS011(True) , self._sample_time , sleep_time = self._sleep_time )
+        sampler = Sampler( SDS011(True) , self._sample_time , sleep_time = self._sleep_time, accuracy = self._accuracy )
 
         while True:
             if self._exception_count >= 5:
