@@ -10,29 +10,37 @@ class TS(object):
         self.data = []
         self.accuracy = accuracy
         if data:
-            for x in data:
-                self.append(x)
+            self.data = [x for x in data]
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        return self.data[idx]
-
+        return self._round(self.data[idx])
 
     def append(self , d):
-        if self.accuracy:
-            d = round(d, self.accuracy)
         self.data.append( d )
 
     def __repr__(self):
         return str(self)
 
+    def _round(self, val):
+        if self.accuracy is None:
+            return val
+        return round(val, self.accuracy)
+
+    def _roundall(self, data):
+        if self.accuracy is None:
+            return data
+        return map(self._round, data)
+
     def __str__(self):
         if len(self) < 10:
-            return str(self.data)
+            return str(self._roundall(self.data))
+
         tmp = self.data[:4]
         tmp += self.data[-4:]
+        tmp = self._roundall(tmp)
         fmt = 'TS[{}, {}, {}, {}, ..., {}, {}, {}, {}]'
         return fmt.format(*tmp)
 
@@ -40,15 +48,13 @@ class TS(object):
         if len(self) == 0:
             raise ValueError('Arithmetic mean of empty time series.')
         m = sum(self.data) / float(len(self))
-        if self.accuracy:
-            return round(m, self.accuracy)
-        return m
+        return self._round(m)
 
     def median(self):
         if len(self) == 0:
             raise ValueError('Median of empty time series.')
         tmp = sorted(self.data)
-        return tmp[len(self)//2]
+        return self._round(tmp[len(self)//2])
 
     def stddev(self):
         ld = len(self.data)
@@ -57,6 +63,4 @@ class TS(object):
         m = self.mean()
         ss = sum((x-m)**2 for x in self.data)
         std = (ss/float(ld))**0.5
-        if self.accuracy:
-            return round(std, self.accuracy)
-        return std
+        return self._round(std)
