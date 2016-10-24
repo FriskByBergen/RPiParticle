@@ -16,6 +16,10 @@ class TS(object):
     def __len__(self):
         return len(self.data)
 
+    def __getitem__(self, idx):
+        return self.data[idx]
+
+
     def append(self , d):
         if self.accuracy:
             d = round(d, self.accuracy)
@@ -35,7 +39,10 @@ class TS(object):
     def mean(self):
         if len(self) == 0:
             raise ValueError('Arithmetic mean of empty time series.')
-        return sum(self.data) / float(len(self))
+        m = sum(self.data) / float(len(self))
+        if self.accuracy:
+            return round(m, self.accuracy)
+        return m
 
     def median(self):
         if len(self) == 0:
@@ -49,4 +56,7 @@ class TS(object):
             raise ValueError('Standard deviation of too few values')
         m = self.mean()
         ss = sum((x-m)**2 for x in self.data)
-        return (ss/float(ld))**0.5
+        std = (ss/float(ld))**0.5
+        if self.accuracy:
+            return round(std, self.accuracy)
+        return std
