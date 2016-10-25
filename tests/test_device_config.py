@@ -53,7 +53,7 @@ class DeviceConfigTest(TestCase):
         with self.assertRaises(KeyError):
             config = DeviceConfig(self.config_file)
 
-        conf_no_key = {"git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , 
+        conf_no_key = {"git_follow" : True, "git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , 
                        "post_path" : "XYZ" , "server_url" : "http:???" , "config_path" : "xyz" , "device_id" : "dev0"}
         with open(self.config_file , "w") as f:
             f.write(json.dumps( conf_no_key ))
@@ -63,7 +63,7 @@ class DeviceConfigTest(TestCase):
 
         config = DeviceConfig( self.config_file , post_key = "Key")
             
-        conf = {"git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , "post_key" : "Key",
+        conf = {"git_follow" : True, "git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , "post_key" : "Key",
                 "post_path" : "XYZ" , "server_url" : "http:???" , "config_path" : "xyz" , "device_id" : "dev0"}
         with open(self.config_file , "w") as f:
             f.write(json.dumps( conf ))
@@ -84,7 +84,7 @@ class DeviceConfigTest(TestCase):
         with open("conf","w") as f:
             f.write(json.dumps( conf ))
 
-        conf2 = {"git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , "post_key" : "KeyX",
+        conf2 = {"git_follow" : True , "git_repo" : "github" , "git_ref" : "master" , "sensor_list" : ["A","B","C"] , "post_key" : "KeyX",
                 "post_path" : "XYZ" , "server_url" : "http:???" , "config_path" : "xyz" , "device_id" : "dev0"}
 
         with open("conf2","w") as f:
@@ -100,9 +100,15 @@ class DeviceConfigTest(TestCase):
         c2 = DeviceConfig( "conf2" )
         self.assertFalse( c1 == c2 )
         self.assertTrue( c1 != c2 )
-        
-        
 
+        c1.data["git_follow"] = True
+        self.assertTrue( c1.updateRequired( c1 ))
+        c1.data["git_follow"] = False
+        self.assertFalse( c1.updateRequired( c1 ))
+
+        self.assertTrue( c1.updateRequired(c2) )
+
+        
     @skipUnless(network, "Requires network access")
     def test_url_get(self):
         with self.assertRaises(requests.ConnectionError):

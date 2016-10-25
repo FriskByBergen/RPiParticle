@@ -9,7 +9,7 @@ from git_module import GitModule
 
 class DeviceConfig(object):
     config_timeout = 10 * 60
-    required_keys = ["git_repo" , "git_ref" , "post_key" , "sensor_list" , "post_path" , "config_path" , "server_url" , "device_id"]
+    required_keys = ["git_repo" , "git_ref" , "git_follow", "post_key" , "sensor_list" , "post_path" , "config_path" , "server_url" , "device_id"]
 
     def __init__(self , filename , post_key = None):
         if not os.path.isfile( filename ):
@@ -19,11 +19,11 @@ class DeviceConfig(object):
         if not "post_key" in config:
             if not post_key is None:
                 config["post_key"] = post_key
-            
+
         for key in self.required_keys:
             if not key in config:
                 raise KeyError("Missing key:%s" % key)
-
+                
         self.filename = filename
         self.data = config
         self.config_ts = datetime.datetime.now()
@@ -74,6 +74,16 @@ class DeviceConfig(object):
 
     def getPostKey(self):
         return self.data["post_key"]
+
+    def getGitFollow(self):
+        return self.data["git_follow"]
+
+
+    def updateRequired(self, other):
+        if self.getGitFollow( ):
+            return True
+
+        return self != other
 
 
     def downloadNew(self):
