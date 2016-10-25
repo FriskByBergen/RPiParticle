@@ -58,10 +58,24 @@ and restart itself.
          Webserver for configuration of that device ID, download and
          test the code, and install it.
 
-      c) It will install the client code as a systemd service.
+      c) It will install the client code as a systemd service (make
+         sure to answer yes on the last question).
  
     It is perfectly OK to run the bin/initrpi script repeatedly.
      
+
+### Manual restart
+
+It should not be necessary to manually restart the friskby client, but
+if things go wrong for some reason, log in to the raspberry pi and
+follow these steps:
+
+1. Stop the current client with: "sudo systemctl stop friskby"
+
+2. Make sure the device is unlocked and has the correct client version
+   on the webserver.
+
+3. Essentially repeat the installation procedure.
 
 
 
