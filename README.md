@@ -42,6 +42,20 @@ and restart itself.
      sudo ./install-deps.sh
 
 
+4. Log in to the web-admin interface and make sure to enter the
+   following information.
+
+   a) Configure your Device in the Devices table.
+
+   b) Configure two sensors attached to your device - these sensor
+      must have the name of your device, suffix "_PM10" and "_PM25"
+      respectively.
+
+   c) Make sure the "Locked" checkbox on your device is
+      *unchecked*. Observe that this will automatically be relocked after
+      you have run the bin/initrpi script - so if you run repeatedly you
+      must go back in and unlock.
+
 
 
 4. Run the bin/initrpi script:
