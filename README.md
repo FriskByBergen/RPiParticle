@@ -42,6 +42,20 @@ and restart itself.
      sudo ./install-deps.sh
 
 
+4. Log in to the web-admin interface and make sure to enter the
+   following information.
+
+   a) Configure your Device in the Devices table.
+
+   b) Configure two sensors attached to your device - these sensor
+      must have the name of your device, suffix "_PM10" and "_PM25"
+      respectively.
+
+   c) Make sure the "Locked" checkbox on your device is
+      *unchecked*. Observe that this will automatically be relocked after
+      you have run the bin/initrpi script - so if you run repeatedly you
+      must go back in and unlock.
+
 
 
 4. Run the bin/initrpi script:
@@ -58,10 +72,24 @@ and restart itself.
          Webserver for configuration of that device ID, download and
          test the code, and install it.
 
-      c) It will install the client code as a systemd service.
+      c) It will install the client code as a systemd service (make
+         sure to answer yes on the last question).
  
     It is perfectly OK to run the bin/initrpi script repeatedly.
      
+
+### Manual restart
+
+It should not be necessary to manually restart the friskby client, but
+if things go wrong for some reason, log in to the raspberry pi and
+follow these steps:
+
+1. Stop the current client with: "sudo systemctl stop friskby"
+
+2. Make sure the device is unlocked and has the correct client version
+   on the webserver.
+
+3. Essentially repeat the installation procedure.
 
 
 
