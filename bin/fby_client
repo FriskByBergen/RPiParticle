@@ -59,7 +59,7 @@ class FbyRunner(object):
     @classmethod
     def updateClient(cls, config):
         new_config = config.downloadNew( )
-        if new_config != config:
+        if config.updateRequired( new_config ):
             try:
                 config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
                 cls.restart( new_config )
@@ -107,7 +107,7 @@ class FbyRunner(object):
 
                 self.post(client_pm10, client_pm25, data)
 
-                self.updateClient()
+                self.updateClient( config )
 
             except KeyboardInterrupt as e:
                 # KeyboardInterrupt - i.e. Ctrl-C is special cased to
