@@ -102,11 +102,7 @@ class DeviceConfigTest(TestCase):
         self.assertTrue( c1 != c2 )
 
         c1.data["git_follow"] = True
-        self.assertTrue( c1.updateRequired( c1 ))
-        c1.data["git_follow"] = False
-        self.assertFalse( c1.updateRequired( c1 ))
-
-        self.assertTrue( c1.updateRequired(c2) )
+        self.assertTrue( c1.updateRequired( ) )
 
         
     @skipUnless(network, "Requires network access")

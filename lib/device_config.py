@@ -79,11 +79,12 @@ class DeviceConfig(object):
         return self.data["git_follow"]
 
 
-    def updateRequired(self, other):
+    def updateRequired(self):
         if self.getGitFollow( ):
             return True
-
-        return self != other
+        else:
+            new_config = self.downloadNew( )
+            return self.getGitRef() != new_config.getGitRef()
 
 
     def downloadNew(self):
