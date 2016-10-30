@@ -23,7 +23,8 @@ class DeviceConfig(object):
         for key in self.required_keys:
             if not key in config:
                 raise KeyError("Missing key:%s" % key)
-                
+
+        self.sha = None
         self.filename = filename
         self.data = config
         self.config_ts = datetime.datetime.now()
@@ -79,11 +80,26 @@ class DeviceConfig(object):
         return self.data["git_follow"]
 
 
-    def updateRequired(self, other):
+    def updateRequired(self):
         if self.getGitFollow( ):
-            return True
+            if self.sha is None:
+                return True
 
-        return self != other
+            try:
+                api_url = "https://api.github.com/repos/FriskByBergen/RPiParticle/git/refs/heads/%s" % self.getGitRef()
+                response = requests.get( url )
+                if response.status_code == 200:
+                    data = json.loads( response.content )
+                    new_sha = data["object"]["sha"]
+                    return new_sha != self.sha
+                else:
+                    return False
+            except:
+                return False
+
+        else:
+            new_config = self.downloadNew( )
+            return self.getGitRef() != new_config.getGitRef()
 
 
     def downloadNew(self):
@@ -140,12 +156,12 @@ class DeviceConfig(object):
         try:
             git_module = GitModule( url = self.getRepoURL() )
             git_module.checkout( self.getGitRef( ) )
-            sha = git_module.getHeadSHA()
+            self.sha = git_module.getHeadSHA()
         except:
-            sha = "????"
+            pass
 
         data = {"key"     : self.getPostKey(),
-                "git_ref" : "%s / %s" % (self.getGitRef() , sha)}
+                "git_ref" : "%s / %s" % (self.getGitRef() , self.sha)}
         headers = {"Content-Type": "application/json"}
 
         response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 

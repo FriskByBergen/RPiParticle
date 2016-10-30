@@ -58,8 +58,10 @@ class FbyRunner(object):
 
     @classmethod
     def updateClient(cls, config):
-        new_config = config.downloadNew( )
-        if config.updateRequired( new_config ):
+        if config.updateRequired( ):
+            msg = "Current git_ref:%s\nNew     git_ref:%s" % (config.getGitRef() , new_config.getGitRef())
+            config.logMessage("Restarting - git_follow: %s" % config.getGitFollow( ) , long_msg = msg)
+
             try:
                 config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
                 cls.restart( new_config )
