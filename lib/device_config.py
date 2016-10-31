@@ -80,7 +80,7 @@ class DeviceConfig(object):
         return self.data["git_follow"]
 
 
-    def updateRequired(self):
+    def updateRequired(self , new_config):
         if self.getGitFollow( ):
             if self.sha is None:
                 return True
@@ -98,7 +98,6 @@ class DeviceConfig(object):
                 return False
 
         else:
-            new_config = self.downloadNew( )
             return self.getGitRef() != new_config.getGitRef()
 
 
