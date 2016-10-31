@@ -42,8 +42,9 @@ and restart itself.
      sudo ./install-deps.sh
 
 
-4. Log in to the web-admin interface and make sure to enter the
-   following information.
+4. Before you can proceed with step 4 you must make sure you have an account and can log in on 
+   the web-admin: https://friskby.herokuapp.com/admin/. Log in to the web-admin interface and 
+   make sure to enter the following information.
 
    a) Configure your Device in the Devices table.
 
