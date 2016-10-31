@@ -40,7 +40,8 @@ and restart itself.
      cd RPiParticle/bin
 
      sudo ./install-deps.sh
-
+   
+   The install-deps.sh script will also install the network time client ntpdate.  
 
 4. Before you can proceed with step 4 you must make sure you have an account and can log in on 
    the web-admin: https://friskby.herokuapp.com/admin/. Log in to the web-admin interface and 
