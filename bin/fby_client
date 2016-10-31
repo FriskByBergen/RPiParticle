@@ -58,12 +58,15 @@ class FbyRunner(object):
 
     @classmethod
     def updateClient(cls, config):
-        if config.updateRequired( ):
+        new_config = config.downloadNew( )
+        if config.updateRequired( new_config ):
             try:
-                config.logMessage("Restarting - new git version:%s" % new_config.getGitRef())
+                config.logMessage("Restarting client - new version:%s" % new_config.getGitRef())
                 cls.restart( new_config )
             except Exception as exc:
-                config.logMessage("Restart failed - trying rollback")
+                exc_type, exc_value, exc_tb = sys.exc_info()
+                tb_list = format_exception( exc_type , exc_value , exc_tb)
+                config.logMessage("Restart failed - trying rollback" , long_msg = "".join( tb_list ))
                 cls.rollback( config )
                 config.logMessage("Rollback complete")
 
