@@ -54,7 +54,7 @@ and restart itself.
    c) Make sure the "Locked" checkbox on your device is
       *unchecked*. Observe that this will automatically be relocked after
       you have run the bin/initrpi script - so if you run repeatedly you
-      must go back in and unlock.
+      must repeat the unlock step.
 
 
 
