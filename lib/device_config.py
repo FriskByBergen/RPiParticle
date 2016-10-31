@@ -87,7 +87,7 @@ class DeviceConfig(object):
 
             try:
                 api_url = "https://api.github.com/repos/FriskByBergen/RPiParticle/git/refs/heads/%s" % self.getGitRef()
-                response = requests.get( url )
+                response = requests.get( api_url )
                 if response.status_code == 200:
                     data = json.loads( response.content )
                     new_sha = data["object"]["sha"]
