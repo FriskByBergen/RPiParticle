@@ -91,14 +91,12 @@ class DeviceConfig(object):
                 if response.status_code == 200:
                     data = json.loads( response.content )
                     new_sha = data["object"]["sha"]
-                    return new_sha != self.sha
-                else:
-                    return False
+                    if new_sha != self.sha:
+                        return True
             except:
-                return False
+                pass
 
-        else:
-            return self.getGitRef() != new_config.getGitRef()
+        return self.getGitRef() != new_config.getGitRef()
 
 
     def downloadNew(self):
