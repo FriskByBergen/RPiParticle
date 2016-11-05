@@ -24,9 +24,16 @@ class FriskbyClient(object):
 
     def post_value(self , timestamp , value):
         try:
+            string_val = ''
+            sensor_val = value
+            if value > self.device_config.getMaxPostValue():
+                string_val = str(value)
+                sensor_val = self.device_config.getMaxPostValue()
             data = {"timestamp" : timestamp,
                     "sensorid"  : self.sensor_id,
-                    "value"     : value,
+                    "string_value": string_val,
+                    "status"    : 0 if sensor_val == value else 3, # Value out of range
+                    "value"     : sensor_val,
                     "key"       : self.device_config.getPostKey( ) }
 
             respons = requests.post( self.device_config.getPostURL( ) , 
