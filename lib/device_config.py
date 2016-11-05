@@ -79,6 +79,11 @@ class DeviceConfig(object):
     def getGitFollow(self):
         return self.data["git_follow"]
 
+    def getMaxPostValue(self):
+        # This can in the future be changed to be a part of the config.
+        # It is the max value we want in the raw data field.
+        # The actual measurement should be sent as string value
+        return 100.0
 
     def updateRequired(self , new_config):
         if self.getGitFollow( ):
