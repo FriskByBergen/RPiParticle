@@ -1,4 +1,6 @@
 import os.path
+from sys import stderr
+
 import json
 import requests
 import datetime
@@ -140,10 +142,13 @@ class DeviceConfig(object):
                 "msg" : msg}
         if long_msg:
             data["long_msg"] = long_msg
+        json_msg = json.dumps(data, sort_keys=True)
+
+        stderr.write('DeviceConfig.logMessage: %s\n' % json_msg)
 
         headers = {"Content-Type": "application/json"}
         response = requests.post("%s/sensor/api/client_log/" % self.getServerURL(),
-                                 data = json.dumps( data ) ,
+                                 data = json_msg ,
                                  headers = headers )
         return response.status_code
 
