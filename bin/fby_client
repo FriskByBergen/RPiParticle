@@ -119,7 +119,7 @@ class FbyRunner(object):
                 exc_type, exc_value, exc_tb = sys.exc_info()
                 tb_list = format_exception( exc_type , exc_value , exc_tb)
                 if self._exception_count < 5:
-                    config.logMessage("Exception caught" , long_msg = "".join( tb_list ))
+                    config.logMessage('Exception caught: "%s".' % str(a), long_msg = "".join( tb_list ))
                 self._exception_count += 1
             else:
                 # try/except/else: if nothing has been raised we successfully posted
