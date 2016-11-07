@@ -75,12 +75,11 @@ class FbyRunner(object):
         data = None
         try:
             data = sampler.collect( )
-        except SerialException as se:
+        except (SerialException, IOError) as err:
             if self._exception_count < 5:
-                config.logMessage('Exception while collecting: %s' % str(se))
+                config.logMessage('Exception while collecting: %s' % str(err))
             self._exception_count += 1
-            sys.stderr.write('Exception in collect %d\n' % self._exception_count)
-            sys.stderr.write('Exception in collect %s\n' % str(se))
+            sys.stderr.write('Exception in collect %s\n' % str(err))
         return data
 
 
