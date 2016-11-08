@@ -22,6 +22,8 @@ class SDS011(object):
         # Read in loop until message start: AAC0
         while True:
             s = self.device.read(1)
+            if len(s) < 1:
+                raise IOError('Device timed out in attempt to read a byte')
             if ord(s) == SDS011.msg_start:
                 s = self.device.read(1)
                 if ord(s) == SDS011.msg_cmd:
