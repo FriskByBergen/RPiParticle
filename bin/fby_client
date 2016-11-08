@@ -34,6 +34,7 @@ class FbyRunner(object):
         self._sleep_time  = 0.50
         self._exception_count = 0 #  #exceptions since last success
         self._accuracy = 4 # round observation to fourth digit
+        self._config = None
 
     @staticmethod
     def install(config):
@@ -77,7 +78,7 @@ class FbyRunner(object):
             data = sampler.collect( )
         except (SerialException, IOError) as err:
             if self._exception_count < 5:
-                config.logMessage('Exception while collecting: %s' % str(err))
+                self._config.logMessage('Exception while collecting: %s' % str(err))
             self._exception_count += 1
             sys.stderr.write('Exception in collect %s\n' % str(err))
         return data
@@ -89,13 +90,13 @@ class FbyRunner(object):
 
     def run(self):
         network_block( )
-        config = DeviceConfig( CONFIG_FILE )
-        config.logMessage("Starting up")
-        config.postGitVersion( )
+        self._config = DeviceConfig( CONFIG_FILE )
+        self._config.logMessage("Starting up")
+        self._config.postGitVersion( )
 
-        device_id = config.getDeviceID( )
-        client_pm10 = FriskbyClient(config , "%s_PM10" % device_id, VAR_PATH)
-        client_pm25 = FriskbyClient(config , "%s_PM25" % device_id, VAR_PATH)
+        device_id = self._config.getDeviceID( )
+        client_pm10 = FriskbyClient(self._config , "%s_PM10" % device_id, VAR_PATH)
+        client_pm25 = FriskbyClient(self._config , "%s_PM25" % device_id, VAR_PATH)
         sampler = Sampler( SDS011(True) , self._sample_time , sleep_time = self._sleep_time, accuracy = self._accuracy )
 
         while True:
@@ -108,7 +109,7 @@ class FbyRunner(object):
 
                 self.post(client_pm10, client_pm25, data)
 
-                self.updateClient( config )
+                self.updateClient( self._config )
 
             except KeyboardInterrupt as e:
                 # KeyboardInterrupt - i.e. Ctrl-C is special cased to
@@ -118,7 +119,7 @@ class FbyRunner(object):
                 exc_type, exc_value, exc_tb = sys.exc_info()
                 tb_list = format_exception( exc_type , exc_value , exc_tb)
                 if self._exception_count < 5:
-                    config.logMessage('Exception caught: "%s".' % str(a), long_msg = "".join( tb_list ))
+                    self._config.logMessage('Exception caught: "%s".' % str(a), long_msg = "".join( tb_list ))
                 self._exception_count += 1
             else:
                 # try/except/else: if nothing has been raised we successfully posted
