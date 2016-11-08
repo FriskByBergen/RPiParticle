@@ -21,57 +21,42 @@ class FriskbyClient(object):
                     pass
             os.unlink( self.cache_file )
 
+    def _post_stack(self):
+        """Posts the entire stack, or raises an exception.
 
-    def post_value(self , timestamp , value):
-        try:
-            data = {"timestamp" : timestamp,
-                    "sensorid"  : self.sensor_id,
-                    "value"     : value,
-                    "key"       : self.device_config.getPostKey( ) }
+        If the requests.post does anything but return 201, this function will
+        raise an exception (could be HttpError, Timeout, ConnectionRefused,
+        Exception).
 
-            respons = requests.post( self.device_config.getPostURL( ) , 
-                                     headers=FriskbyClient.headers, 
-                                     data=json.dumps(data))
-
-            if respons.status_code != 201:
-                self.stack.append( (timestamp , value) )
-        except:
-            self.stack.append( (timestamp , value) )
-
-
-    def post_stack(self):
+        If the return code is 201, the stack will be cleared and cache_file
+        deleted (unlinked).
+        """
         data = {"sensorid"   : self.sensor_id,
                 "value_list" : self.stack,
                 "key"        : self.device_config.getPostKey( ) }
 
-        try:
-            respons = requests.post( self.device_config.getPostURL( ) , 
-                                     headers=FriskbyClient.headers, 
-                                     data=json.dumps(data))
-            if respons.status_code != 201:
-                raise Exception("Recieved wrong status code")
-            self.stack = []
-        except:
-            pass
+        respons = requests.post( self.device_config.getPostURL( ) ,
+                                 headers=FriskbyClient.headers,
+                                 data=json.dumps(data))
+        if respons.status_code != 201:
+            respons.raise_for_status()
+            raise Exception('Server did not respond with 201 Created.  Response: %d %s'
+                            % (respons.status_code, respons.text))
 
-        if len(self.stack) == 0:
-            if os.path.isfile( self.cache_file ):
-                os.unlink( self.cache_file )
-        else:
-            with open(self.cache_file , "w") as f:
-                f.write( json.dumps( self.stack ))
-                    
+        self.stack = []
+        if os.path.isfile( self.cache_file ):
+            os.unlink( self.cache_file )
 
-            
 
     def post(self , value):
-        #Manually attached timezone
-        timestamp = datetime.datetime.utcnow().isoformat() + "+00:00"
-        if len(self.stack) == 0:
-            self.post_value( timestamp, value )
-        else:
-            self.stack.append( (timestamp , value) )
+        timestamp = datetime.datetime.utcnow().isoformat() + "+00:00" # manual TZ
+
+        self.stack.append( (timestamp , value) )
 
         if len(self.stack) > 0:
-            self.post_stack( )
-        
+            try:
+                self._post_stack( )
+            except Exception as err:
+                with open(self.cache_file , "w") as f:
+                    f.write( json.dumps( self.stack ))
+                raise err
