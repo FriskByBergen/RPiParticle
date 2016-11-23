@@ -72,7 +72,7 @@ class FbyRunner(object):
                 config.logMessage("Rollback complete")
 
 
-    def collect(self, sampler):
+    def collect(self, sampler, config):
         data = None
         try:
             data = sampler.collect( )
@@ -103,7 +103,7 @@ class FbyRunner(object):
             if self._exception_count >= 5:
                 time.sleep(30)
             try:
-                data = self.collect(sampler)
+                data = self.collect(sampler , config)
                 if not data:
                     continue
 
