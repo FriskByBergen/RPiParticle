@@ -59,4 +59,4 @@ class FriskbyClient(object):
             except Exception as err:
                 with open(self.cache_file , "w") as f:
                     f.write( json.dumps( self.stack ))
-                raise err
+                raise
