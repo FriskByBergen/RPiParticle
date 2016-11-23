@@ -56,7 +56,7 @@ class FriskbyClient(object):
         if len(self.stack) > 0:
             try:
                 self._post_stack( )
-            except Exception as err:
+            except Exception:
                 with open(self.cache_file , "w") as f:
                     f.write( json.dumps( self.stack ))
-                raise err
+                raise
