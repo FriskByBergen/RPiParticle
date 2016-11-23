@@ -29,4 +29,7 @@ def findTestsInDirectory(path, recursive=True , pattern = "test*.py"):
 
 
 test_suite = findTestsInDirectory( os.path.dirname( __file__ ))
-TextTestRunner(verbosity=1).run(test_suite)
+test_runner = TextTestRunner(verbosity=1)
+test_runner.run(test_suite)
+if not test_runner.run(test_suite).wasSuccessful():
+    sys.exit('RPiParticle test failed!')

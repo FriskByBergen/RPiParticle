@@ -10,7 +10,7 @@ from friskby_client import FriskbyClient
 from device_config import DeviceConfig
 from friskby_client import FriskbyClient
 from context import TestContext
-
+from requests import ConnectionError
 
 try:
     response = requests.get("https://github.com")
@@ -84,8 +84,10 @@ class FriskbyClientCTest(TestCase):
         client.post( 0.0 )
         url = self.context.device_config.data["server_url"]
         self.context.device_config.data["server_url"] = "https://friskby.herokuapp.comXXX"
-        client.post(1.0)
-        client.post(2.0)
+        with self.assertRaises(ConnectionError):
+            client.post(1.0)
+        with self.assertRaises(ConnectionError):
+            client.post(2.0)
         self.assertEqual( len(client.stack) , 2 )
         self.context.device_config.data["server_url"] = url
         client.post(3.0)
