@@ -2,5 +2,3 @@ requests
 gitpython
 pyserial
 pylint
-
-
