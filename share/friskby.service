@@ -5,7 +5,8 @@ Requires=network-online.target
 
 [Service]
 ExecStart=%(EXECUTABLE)s
-
+Restart=on-failure
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
