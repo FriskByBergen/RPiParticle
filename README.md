@@ -1,4 +1,4 @@
-# RPiParticle
+# RPiParticle ![build status](https://api.travis-ci.org/FriskByBergen/RPiParticle.svg?branch=master "TravisCI Build Status")
 
 ## Overview
 
