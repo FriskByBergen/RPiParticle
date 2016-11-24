@@ -10,7 +10,7 @@ from friskby_client import FriskbyClient
 from device_config import DeviceConfig
 from friskby_client import FriskbyClient
 from context import TestContext
-from requests import ConnectionError
+from requests import ConnectionError, HTTPError
 
 try:
     response = requests.get("https://github.com")
@@ -64,7 +64,8 @@ class FriskbyClientCTest(TestCase):
             f.write( json.dumps( data ))
 
         client = FriskbyClient( self.context.device_config_broken  , self.context.sensor_id , "/tmp" )
-        client.post(1.0)
+        with self.assertRaises(HTTPError):
+            client.post(1.0)
         self.assertTrue( len(client.stack), 3)
         self.assertEqual( client.stack[0][0] , 1 )
         self.assertEqual( client.stack[1][0] , 2 )
