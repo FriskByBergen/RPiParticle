@@ -1,4 +1,6 @@
 language: python
+env:
+  - ISTRAVIS=True
 python:
   - "2.7"
 install:
