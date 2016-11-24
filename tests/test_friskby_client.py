@@ -43,19 +43,20 @@ class FriskbyClientCTest(TestCase):
     @skipUnless(network, "Requires network access")
     def test_cache(self):
         fname = "/tmp/%s" % self.context.sensor_id
+        d1 = '2016-11-24T22:23:19.271828+00:00'
+        d2 = '2016-11-24T22:26:21.182845+00:00'
         with open(fname , "w") as f:
-            data = [(0,100),(1,200)]
+            data = [(d1,100),(d2,200)]
             f.write( json.dumps( data ))
-            
         client = FriskbyClient( self.context.device_config  , self.context.sensor_id , "/tmp" )
         self.assertFalse( os.path.isfile( fname ))
         self.assertTrue( len(client.stack), 2)
-        self.assertEqual( client.stack[0][0] , 0 )
-        self.assertEqual( client.stack[1][0] , 1 )
+        self.assertEqual( client.stack[0][0] , d1 )
+        self.assertEqual( client.stack[1][0] , d2 )
         self.assertEqual( client.stack[0][1] , 100 )
         self.assertEqual( client.stack[1][1] , 200 )
         client.post(1.0)
-        self.assertTrue( len(client.stack), 0)
+        self.assertTrue( len(client.stack) == 0)
 
         fname = "/tmp/%s" % self.context.sensor_id
         with open(fname , "w") as f:
