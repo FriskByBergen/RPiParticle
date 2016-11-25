@@ -1,6 +1,7 @@
 import tempfile 
 from unittest import TestCase, skipIf
 import os.path
+from os import environ
 import stat
 from serial import SerialException
 
@@ -10,6 +11,9 @@ try:
 except SerialException:
     on_RPI = False
 
+if 'ISTRAVIS' in environ:
+    print('Setting git test module to Travis mode!')
+    on_RPI = True
 
 from git.repo.base import Repo
 from git import GitCommandError, NoSuchPathError, InvalidGitRepositoryError
