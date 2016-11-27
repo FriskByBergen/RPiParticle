@@ -88,6 +88,24 @@ class FbyRunner(object):
         client_pm10.post( data[0].median() )
         client_pm25.post( data[1].median() )
 
+    def _handle_post_exception(self, err, exc_info):
+        self._exception_count += 1
+        if self._exception_count > 5:
+            return
+        err_msg = '(unknown error for %s)' % str(type(err))
+        try:
+            err_msg = str(err)
+        except Exception:
+            pass
+        exc_type, exc_value, exc_tb = exc_info
+        tb_list = format_exception( exc_type , exc_value , exc_tb)
+        log_payload = 'Exception caught: "%s".' % (err_msg)
+        traceback = "".join( tb_list )
+        try:
+            self._config.logMessage(log_payload, long_msg = traceback)
+        except Exception as err:
+            sys.stderr.write('Error submitting log message!')
+
     def run(self):
         network_block( )
         self._config = DeviceConfig( CONFIG_FILE )
@@ -106,22 +124,10 @@ class FbyRunner(object):
                 data = self.collect(sampler , self._config)
                 if not data:
                     continue
-
                 self.post(client_pm10, client_pm25, data)
-
                 self.updateClient( self._config )
-
             except Exception as a:
-                err_msg = '(unknown error for %s)' % str(type(a))
-                try:
-                    err_msg = str(a)
-                except Exception:
-                    pass
-                exc_type, exc_value, exc_tb = sys.exc_info()
-                tb_list = format_exception( exc_type , exc_value , exc_tb)
-                if self._exception_count < 5:
-                    self._config.logMessage('Exception caught: "%s".' % err_msg, long_msg = "".join( tb_list ))
-                self._exception_count += 1
+                self._handle_post_exception(a, sys.exc_info())
             else:
                 # try/except/else: if nothing has been raised we successfully posted
                 self._exception_count = 0
