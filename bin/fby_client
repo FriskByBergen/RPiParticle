@@ -104,7 +104,7 @@ class FbyRunner(object):
         try:
             self._config.logMessage(log_payload, long_msg = traceback)
         except Exception as err:
-            print('Error submitting log message!')
+            sys.stderr.write('Error submitting log message!')
 
     def run(self):
         network_block( )
