@@ -37,7 +37,8 @@ class FriskbyClient(object):
 
         respons = requests.post( self.device_config.getPostURL( ) ,
                                  headers=FriskbyClient.headers,
-                                 data=json.dumps(data))
+                                 data=json.dumps(data),
+                                 timeout=30)
         if respons.status_code != 201:
             respons.raise_for_status()
             raise Exception('Server did not respond with 201 Created.  Response: %d %s'
