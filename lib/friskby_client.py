@@ -7,6 +7,7 @@ from requests.exceptions import ConnectionError
 
 class FriskbyClient(object):
     headers = {'Content-Type': 'application/json'}
+        #'Connection'  :  'close'}
 
     def __init__(self , device_config , sensor_id, var_path):
         self.device_config = device_config
@@ -39,6 +40,7 @@ class FriskbyClient(object):
                                  headers=FriskbyClient.headers,
                                  data=json.dumps(data),
                                  timeout=30)
+        respons.connection.close()
         if respons.status_code != 201:
             respons.raise_for_status()
             raise Exception('Server did not respond with 201 Created.  Response: %d %s'
