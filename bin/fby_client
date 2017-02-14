@@ -2,7 +2,7 @@
 import sys
 import os
 from serial import SerialException
-import datetime
+from datetime import datetime as dt
 import time
 import requests
 from traceback import format_exception
@@ -26,6 +26,25 @@ if os.getenv("FRISKBY_TEST"):
 else:
     from sds011 import SDS011
 
+
+def get_sys_info():
+    """This gets basic system information to log on startup"""
+    sysname, nodename, release, version, machine = os.uname()
+    python_vs, python_cc = sys.version.split('\n')
+    req_vs = '0.0.0'
+    local_time = dt.now().isoformat()
+    try:
+        req_vs = requests.__version__
+    except:
+        pass
+    return {'sysname': sysname,
+            'nodename': nodename,
+            'release':  release,
+            'version': version,
+            'python': python_vs,
+            'pythoncc': python_cc,
+            'requests': req_vs,
+            'localtime': local_time}
 
 class FbyRunner(object):
 
@@ -109,7 +128,12 @@ class FbyRunner(object):
     def run(self):
         network_block( )
         self._config = DeviceConfig( CONFIG_FILE )
-        self._config.logMessage("Starting up")
+        sys_info = 'missing sys_info'
+        try:
+            sys_info = str(get_sys_info())
+        except:
+            pass
+        self._config.logMessage("Starting up", long_msg = sys_info)
         self._config.postGitVersion( )
 
         device_id = self._config.getDeviceID( )
@@ -135,10 +159,10 @@ class FbyRunner(object):
 def network_block():
     url = "http://www.google.com"
     timeout = 120
-    start = datetime.datetime.now()
+    start = dt.now()
     while True:
-        dt = datetime.datetime.now() - start
-        if dt.total_seconds() > timeout:
+        dt_now = dt.now() - start
+        if dt_now.total_seconds() > timeout:
             sys.exit("No network contact established - giving up")
 
         try:
