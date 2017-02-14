@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+#
+# This is a simple script that should be invoked by systemd or cron once every
+# 10 minutes or so.  The submit frequency is determined by
+# fby_submitter.service.  This file is in term written by the fby_client, the
+# update manager.
+#
+# The sole task of this is script is to read data from the friskby_dao object
+# and submit it to the cloud.
+
+from __future__ import print_function
+import sys
+import os
+
+ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
+sys.path.insert(0 , os.path.join(ROOT , "lib"))
+CONFIG_FILE = os.path.join( ROOT , "etc/config.json")
+VAR_PATH = os.path.join(ROOT , "var")
+
+class FbySubmitter(object):
+
+    def __init__(self, argv):
+        self._config = None
+        self._limit = 100
+
+    def submit(self):
+        rows = self.db.rows(limit=self.limit)
+        client_pm10.post( data[0].median() )
+        client_pm25.post( data[1].median() )
+        self.db.update(rows, uploaded=True)
+
+
+def main():
+    s = FbySubmitter()
+    s.submit()
+
+if __name__ == '__main__':
+    main()
