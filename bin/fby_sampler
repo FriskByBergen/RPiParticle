@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+#
+# This is a simple script that should be invoked by systemd or cron once every
+# minute or so.  The sample frequency is determined by fby_sampler.service.
+# This file is in term written by the fby_client, the update manager.
+#
+# The sole task of this is script is to sample from SDS011 n times and send the
+# data to the friskby_dao object.
+
+
+from __future__ import print_function
+
+import sys
+import os
+
+if 'FRISKBY_TEST' in os.environ():
+    from mock_sds011 import SDS011
+else:
+    from sds011 import SDS011
+
+
+from sampler import Sampler
+
+ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
+sys.path.insert(0 , os.path.join(ROOT , "lib"))
+CONFIG_FILE = os.path.join( ROOT , "etc/config.json")
+VAR_PATH = os.path.join(ROOT , "var")
+
+
+class FbySampler(object):
+
+    def __init__(self, argv):
+        self._sample_time = 10 * 60
+        self._sleep_time  = 0.50
+        self._accuracy = 4 # round observation to fourth digit
+        self._config = None
+        device_id = self._config.getDeviceID( )
+        client_pm10 = FriskbyClient(self._config , "%s_PM10" % device_id, VAR_PATH)
+        client_pm25 = FriskbyClient(self._config , "%s_PM25" % device_id, VAR_PATH)
+        sampler = Sampler(SDS011(True),
+                          self._sample_time,
+                          sleep_time = self._sleep_time,
+                          accuracy = self._accuracy)
+
+
+    def collect(self):
+        data = self.sampler.collect()
+        self.db.persist(data)
+
+def main():
+    s = FbySampler()
+    s.collect()
+
+if __name__ == '__main__':
+    main()

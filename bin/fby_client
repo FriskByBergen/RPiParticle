@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+#
+# This is a script that should be invoked by systemd or cron once every 1 to 12
+# hours or so.  The update frequency is determined by fby_updater.service.  This
+# file is in term written by me, the update manager.
+#
+# The sole task of this is script is to read settings data from the cloud and
+# manage the sample and submit services.  I can also do database maintenance.
+
+from __future__ import print_function
+
+
 import sys
 import os
 from serial import SerialException
@@ -26,7 +37,15 @@ if os.getenv("FRISKBY_TEST"):
 else:
     from sds011 import SDS011
 
-
+#
+# This is just an update manager.  Its role is to:
+#
+# 1. download new configuration files and write etc/friskby.conf and .service
+#    files
+# 2. run the db.cleanup function
+#
+# it should be run ~once per hour, or around midnight or something
+#
 class FbyRunner(object):
 
     def __init__(self, argv):
@@ -83,6 +102,9 @@ class FbyRunner(object):
             sys.stderr.write('Exception in collect %s\n' % str(err))
         return data
 
+
+    def cleanup(self):
+        return self.db.drop_uploaded_rows()
 
     def post(self, client_pm10, client_pm25, data):
         client_pm10.post( data[0].median() )
