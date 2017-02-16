@@ -42,7 +42,8 @@ class PylintTest(TestCase):
                     "lib/git_module.py",
                     "lib/sds011.py",
                     "lib/wifi_config.py",
-                    "lib/service.py"]:
+                    "lib/service.py",
+                    "lib/os_release.py"]:
                      
             exit_code = subprocess.check_call(["pylint" , "-E", lib])
             self.assertEqual( exit_code , 0 )
