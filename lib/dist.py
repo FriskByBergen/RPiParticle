@@ -5,7 +5,8 @@ files = ["bin/fby_client",
          "lib/dist.py",
          "lib/sampler.py",
          "lib/sds011.py",
-         "lib/friskby_client.py"]
+         "lib/friskby_client.py",
+         "lib/os_release.py"]
 
 directories = ["var",
                "etc"]

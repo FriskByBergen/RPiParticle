@@ -6,7 +6,7 @@ from datetime import datetime as dt
 import time
 import requests
 from traceback import format_exception
-
+import json
 
 ROOT = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
 sys.path.insert(0 , os.path.join(ROOT , "lib"))
@@ -18,6 +18,7 @@ from friskby_client import FriskbyClient
 from sampler import Sampler
 from device_config import DeviceConfig
 from git_module import GitModule
+from os_release import sys_info
 if os.getenv("FRISKBY_TEST"):
     try:
         from sds011 import SDS011
@@ -26,25 +27,15 @@ if os.getenv("FRISKBY_TEST"):
 else:
     from sds011 import SDS011
 
-
 def get_sys_info():
-    """This gets basic system information to log on startup"""
-    sysname, nodename, release, version, machine = os.uname()
-    python_vs, python_cc = sys.version.split('\n')
-    req_vs = '0.0.0'
-    local_time = dt.now().isoformat()
+    info = ''
     try:
-        req_vs = requests.__version__
-    except:
-        pass
-    return {'sysname': sysname,
-            'nodename': nodename,
-            'release':  release,
-            'version': version,
-            'python': python_vs,
-            'pythoncc': python_cc,
-            'requests': req_vs,
-            'localtime': local_time}
+        info = sys_info()
+        if info:
+            info = json.dumps(info, indent=4, sort_keys=True)
+    except Exception as e:
+        info = 'Error getting sys_info: "%s".' % e
+    return info
 
 class FbyRunner(object):
 
@@ -128,12 +119,8 @@ class FbyRunner(object):
     def run(self):
         network_block( )
         self._config = DeviceConfig( CONFIG_FILE )
-        sys_info = 'missing sys_info'
-        try:
-            sys_info = str(get_sys_info())
-        except:
-            pass
-        self._config.logMessage("Starting up", long_msg = sys_info)
+        long_msg = get_sys_info()
+        self._config.logMessage("Starting up", long_msg = long_msg)
         self._config.postGitVersion( )
 
         device_id = self._config.getDeviceID( )
