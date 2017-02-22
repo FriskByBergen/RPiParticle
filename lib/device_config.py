@@ -89,7 +89,7 @@ class DeviceConfig(object):
 
             try:
                 api_url = "https://api.github.com/repos/FriskByBergen/RPiParticle/git/refs/heads/%s" % self.getGitRef()
-                response = requests.get( api_url )
+                response = requests.get(api_url, timeout=10)
                 if response.status_code == 200:
                     data = json.loads( response.content )
                     new_sha = data["object"]["sha"]
@@ -118,7 +118,7 @@ class DeviceConfig(object):
             
     @classmethod
     def download(cls , url , post_key = None):
-        response = requests.get( url )
+        response = requests.get(url, timeout=10)
         if response.status_code != 200:
             raise ValueError("http GET return status:%s" % response.status_code)
 
@@ -149,7 +149,7 @@ class DeviceConfig(object):
         headers = {"Content-Type": "application/json"}
         response = requests.post("%s/sensor/api/client_log/" % self.getServerURL(),
                                  data = json_msg ,
-                                 headers = headers )
+                                 headers = headers, timeout=10)
         return response.status_code
 
 
@@ -168,4 +168,5 @@ class DeviceConfig(object):
 
         response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
                                 data = json.dumps( data ) ,
-                                headers = headers )
+                                headers = headers,
+                                timeout=10)
