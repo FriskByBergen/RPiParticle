@@ -153,7 +153,7 @@ def network_block():
             sys.exit("No network contact established - giving up")
 
         try:
-            response = requests.get( url )
+            response = requests.get(url, timeout=10)
             if response.status_code == 200:
                 break
         except Exception:

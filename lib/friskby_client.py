@@ -39,7 +39,7 @@ class FriskbyClient(object):
         respons = requests.post( self.device_config.getPostURL( ) ,
                                  headers=FriskbyClient.headers,
                                  data=json.dumps(data),
-                                 timeout=30)
+                                 timeout=10)
         respons.connection.close()
         if respons.status_code != 201:
             respons.raise_for_status()
