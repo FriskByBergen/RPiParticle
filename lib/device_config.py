@@ -16,7 +16,7 @@ class DeviceConfig(object):
     def __init__(self , filename , post_key = None):
         if not os.path.isfile( filename ):
             raise IOError("No such file: %s" % filename)
-        
+
         config = json.load( open(filename) )
         if not "post_key" in config:
             if not post_key is None:
@@ -48,7 +48,7 @@ class DeviceConfig(object):
     def save(self , filename = None):
         if filename is None:
             filename  = self.filename
-        
+
         path = os.path.dirname( filename )
         if not os.path.isdir( path ):
             os.makedirs( path )
@@ -62,7 +62,7 @@ class DeviceConfig(object):
 
     def getConfigPath(self):
         return self.data["config_path"]
-        
+
     def getPostURL(self):
         return "%s/%s" % (self.data["server_url"], self.data["post_path"])
 
@@ -115,7 +115,7 @@ class DeviceConfig(object):
             return self
 
 
-            
+
     @classmethod
     def download(cls , url , post_key = None):
         response = requests.get(url, timeout=10)
@@ -126,14 +126,14 @@ class DeviceConfig(object):
         data = json.loads(response.content)
         tmp = urlparse( url )
         config = data["client_config"]
-        config["server_url"] = "%s://%s" % (tmp.scheme , tmp.netloc) 
+        config["server_url"] = "%s://%s" % (tmp.scheme , tmp.netloc)
         with open(config_file,"w") as f:
             f.write( json.dumps(config) )
-            
+
         config = DeviceConfig( config_file , post_key = post_key)
-        os.unlink( config_file ) 
+        os.unlink( config_file )
         config.filename = None
-        
+
         return config
 
     def logMessage( self , msg , long_msg = None):
@@ -166,7 +166,7 @@ class DeviceConfig(object):
                 "git_ref" : "%s / %s" % (self.getGitRef() , self.sha)}
         headers = {"Content-Type": "application/json"}
 
-        response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )), 
+        response = requests.put("%s/sensor/api/device/%s/" % (self.getServerURL(), self.getDeviceID( )),
                                 data = json.dumps( data ) ,
                                 headers = headers,
                                 timeout=10)

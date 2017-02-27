@@ -8,8 +8,12 @@ main_module = imp.load_source("fby_client" , client_file)
 
 class FbyRunnerTest(TestCase):
 
+    def setUp(self):
+        self._tmp_f = '/tmp/%d' % randint(2**30, 2**32)
+        os.mkdir(self._tmp_f)
+
     def test_load(self):
-        fby_client = main_module.FbyRunner( ["arg1","arg2"] )
+        fby_client = main_module.FbyRunner(var_path=self._tmp_f)
 
     def test_sysinfo(self):
         sys_info = main_module.get_sys_info()
