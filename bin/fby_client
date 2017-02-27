@@ -113,7 +113,7 @@ class FbyRunner(object):
             sys.stderr.write('Error submitting log message!')
 
     def run(self):
-        network_block()
+
         self._config = DeviceConfig(CONFIG_FILE)
         long_msg = get_sys_info()
         self._config.logMessage("Starting up", long_msg=long_msg)
@@ -126,7 +126,9 @@ class FbyRunner(object):
 
         while True:
             if self._exception_count >= 5:
-                time.sleep(30)
+                print('Warning: exception count exceeded')
+                sys.stdout.flush()
+                sys.exit('Exception count exceeded.  Giving up.')
             try:
                 print('Collecting ...')
                 sys.stdout.flush()
@@ -141,22 +143,6 @@ class FbyRunner(object):
             else:
                 # try/except/else: if nothing has been raised we successfully posted
                 self._exception_count = 0
-
-def network_block():
-    url = "http://www.google.com"
-    timeout = 120
-    start = dt.now()
-    while True:
-        dt_now = dt.now() - start
-        if dt_now.total_seconds() > timeout:
-            sys.exit("No network contact established - giving up")
-
-        try:
-            response = requests.get(url, timeout=10)
-            if response.status_code == 200:
-                break
-        except Exception:
-            time.sleep(2)
 
 
 if __name__ == "__main__":
