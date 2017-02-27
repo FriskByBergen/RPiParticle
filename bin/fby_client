@@ -14,7 +14,8 @@ CONFIG_FILE = os.path.join(ROOT, "etc/config.json")
 VAR_PATH = os.path.join(ROOT, "var")
 
 import dist
-from friskby_client import FriskbyClient
+from fby_submitter import FriskbySubmitter
+from friskby_dao import FriskbyDao
 from sampler import Sampler
 from device_config import DeviceConfig
 from git_module import GitModule
@@ -45,6 +46,17 @@ class FbyRunner(object):
         self._exception_count = 0 #  #exceptions since last success
         self._accuracy = 4 # round observation to fourth digit
         self._config = None
+        if not var_path:
+            var_path = '/usr/local/friskby/var'
+        self._sql_path = os.path.join(var_path, 'friskby.sql')
+        self._dao = FriskbyDao(self._sql_path)
+        self._submitter = FriskbySubmitter(self._dao)
+
+    def get_dao(self):
+        return self._dao
+
+    def get_submitter(self):
+        return self._submitter
 
     @staticmethod
     def install(config):
@@ -82,22 +94,6 @@ class FbyRunner(object):
                 config.logMessage("Rollback complete")
 
 
-    def collect(self, sampler, config):
-        data = None
-        try:
-            data = sampler.collect( )
-        except (SerialException, IOError) as err:
-            if self._exception_count < 5:
-                self._config.logMessage('Exception while collecting: %s' % str(err))
-            self._exception_count += 1
-            sys.stderr.write('Exception in collect %s\n' % str(err))
-        return data
-
-
-    def post(self, client_pm10, client_pm25, data):
-        client_pm10.post( data[0].median() )
-        client_pm25.post( data[1].median() )
-
     def _handle_post_exception(self, err, exc_info):
         self._exception_count += 1
         if self._exception_count > 5:
@@ -123,22 +119,25 @@ class FbyRunner(object):
         self._config.logMessage("Starting up", long_msg=long_msg)
         self._config.postGitVersion()
 
-        device_id = self._config.getDeviceID( )
-        client_pm10 = FriskbyClient(self._config , "%s_PM10" % device_id, VAR_PATH)
-        client_pm25 = FriskbyClient(self._config , "%s_PM25" % device_id, VAR_PATH)
-        sampler = Sampler( SDS011(True) , self._sample_time , sleep_time = self._sleep_time, accuracy = self._accuracy )
+        self._submitter.set_config(self._config)
+        sampler = Sampler(SDS011(True), self._dao,
+                          self._sample_time, sleep_time=self._sleep_time,
+                          accuracy=self._accuracy)
 
         while True:
             if self._exception_count >= 5:
                 time.sleep(30)
             try:
-                data = self.collect(sampler , self._config)
-                if not data:
-                    continue
-                self.post(client_pm10, client_pm25, data)
-                self.updateClient( self._config )
-            except Exception as a:
-                self._handle_post_exception(a, sys.exc_info())
+                print('Collecting ...')
+                sys.stdout.flush()
+                sampler.collect()
+
+                self._submitter.post()
+                print('Updating ...')
+                sys.stdout.flush()
+                self.updateClient(self._config)
+            except Exception as err:
+                self._handle_post_exception(err, sys.exc_info())
             else:
                 # try/except/else: if nothing has been raised we successfully posted
                 self._exception_count = 0

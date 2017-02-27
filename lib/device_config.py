@@ -60,6 +60,13 @@ class DeviceConfig(object):
     def getServerURL(self):
         return self.data["server_url"]
 
+    def getSensorId(self, sensor_type):
+        vals = self.data['sensor_list']
+        for s_id in vals:
+            if sensor_type in s_id:
+                return s_id
+        return None
+
     def getConfigPath(self):
         return self.data["config_path"]
 
