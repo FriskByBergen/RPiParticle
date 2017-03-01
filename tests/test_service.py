@@ -1,15 +1,14 @@
+from __future__ import absolute_import
 import os
 import requests
 import shutil
 import json
-import tempfile 
+import tempfile
 from unittest import TestCase, skipUnless
 import os.path
 import stat
 
-from service_config import ServiceConfig
-
-
+from friskby import ServiceConfig
 
 class ServiceTest(TestCase):
 
@@ -18,16 +17,18 @@ class ServiceTest(TestCase):
             sc = ServiceConfig("Does/not/exist")
 
 
-        template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "invalid") )
+        template = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                "invalid"))
         with self.assertRaises(ValueError):
             sc = ServiceConfig(template)
 
-        template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby.service") )
-        sc = ServiceConfig( template , config_file = "/tmp/friskby.service")
+        template = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                "../share/friskby.service"))
+        sc = ServiceConfig(template, config_file="/tmp/friskby.service")
 
-        exe = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "exe") )
+        exe = os.path.abspath(os.path.join(os.path.dirname(__file__), "exe"))
         content = sc.save(exe)
-        
 
     def test_is_systemd(self):
-        self.assertEqual( os.path.isdir( "/etc/systemd/system") , ServiceConfig.systemd())
+        self.assertEqual(os.path.isdir("/etc/systemd/system"),
+                         ServiceConfig.systemd())

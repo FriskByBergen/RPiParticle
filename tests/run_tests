@@ -2,34 +2,35 @@
 import sys
 import os
 import os.path
-from serial import SerialException
-from unittest import TestLoader,TextTestRunner
+from unittest import TestLoader, TextTestRunner
+from friskby import SDS011
 
-TEST_PYTHONPATH = "%s:%s" % (os.path.abspath( os.path.join( os.path.dirname(__file__) , "../lib") ) , os.path.abspath( os.path.dirname( __file__)))
+TEST_PYTHONPATH = "%s:%s" % (os.path.abspath(os.path.join(os.path.dirname(__file__), "../lib")),
+                             os.path.abspath(os.path.dirname(__file__)))
 
 os.environ["PYTHONPATH"] = TEST_PYTHONPATH + os.pathsep + os.getenv("PYTHONPATH", "")
 for path_element in reversed(TEST_PYTHONPATH.split(os.pathsep)):
     sys.path.insert(0, path_element)
 
-try:
-    from sds011 import SDS011
-except SerialException:
+
+if SDS011.is_mock():
     os.environ["FRISKBY_TEST"] = "True"
 
 
-def findTestsInDirectory(path, recursive=True , pattern = "test*.py"):
+def findTestsInDirectory(path, recursive=True, pattern="test*.py"):
     loader = TestLoader()
-    test_suite = loader.discover(path , pattern = pattern)
-    
-    for (root, dirnames, filenames) in os.walk( path ):
+    test_suite = loader.discover(path, pattern=pattern)
+
+    for (root, dirnames, _) in os.walk(path):
         for directory in dirnames:
-            test_suite.addTests(ErtTestRunner.findTestsInDirectory(os.path.join(root, directory), recursive , pattern))
-            
+            test_suite.addTests(findTestsInDirectory(os.path.join(root, directory),
+                                                     recursive, pattern))
+
     return test_suite
 
 
-test_suite = findTestsInDirectory( os.path.dirname( __file__ ))
-test_runner = TextTestRunner(verbosity=1)
-test_runner.run(test_suite)
-if not test_runner.run(test_suite).wasSuccessful():
+TEST_SUITE = findTestsInDirectory(os.path.dirname(__file__))
+TEST_RUNNER = TextTestRunner(verbosity=1)
+TEST_RUNNER.run(TEST_SUITE)
+if not TEST_RUNNER.run(TEST_SUITE).wasSuccessful():
     sys.exit('RPiParticle test failed!')

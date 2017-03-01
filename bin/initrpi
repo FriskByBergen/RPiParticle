@@ -1,26 +1,16 @@
 #!/usr/bin/env python
+from __future__ import (print_function, absolute_import)
 import sys
-import requests
-import json
 import os.path
-import subprocess
+import friskby
+from friskby import DeviceConfig, GitModule, WifiConfig, ServiceConfig
 
-
-dist_root = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../" ))
-sys.path.insert(0 , os.path.join(dist_root , "lib"))
+dist_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.insert(0, os.path.join(dist_root, "lib"))
 
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
 default_ROOT = "/usr/local/friskby"
-
-
-
-import dist
-from device_config import DeviceConfig
-from git_module import GitModule
-from wifi_config import WifiConfig
-from service_config import ServiceConfig
-
 
 def configure_wifi():
     conf = WifiConfig()
@@ -28,10 +18,10 @@ def configure_wifi():
         try:
             ssid = raw_input("SSID.........: ")
             psk_key = raw_input("Password.....: ")
-            conf.addnetwork( ssid, psk_key )
+            conf.addnetwork(ssid, psk_key)
             conf.save()
 
-            WifiConfig.ifup( )
+            WifiConfig.ifup()
             break
         except KeyboardInterrupt:
             break
@@ -41,10 +31,10 @@ def configure_wifi():
 
 def configure_service(client_path):
     if ServiceConfig.systemd():
-        template = os.path.abspath( os.path.join( os.path.dirname( __file__ ) , "../share/friskby.service") )
-        sc = ServiceConfig( template )
-        sc.save( client_path )
-        sc.enable( True )
+        template = os.path.abspath(os.path.join(os.path.dirname(__file__), "../share/friskby.service"))
+        sc = ServiceConfig(template)
+        sc.save(client_path)
+        sc.enable(True)
 
         print("Service configuration saved in: %s\n" % sc.config_file)
     else:
@@ -57,14 +47,14 @@ while True:
     config_wifi = raw_input("Configure wifi [y/N]: ")
     if config_wifi == "":
         config_wifi = "N"
-        
-    if config_wifi in ["y","Y"]:
+
+    if config_wifi in ["y", "Y"]:
         configure_wifi()
         print("Wifi configuration saved\n")
         break
-    elif config_wifi in ["n","N"]:
+    elif config_wifi in ["n", "N"]:
         break
-    
+
 
 
 while True:
@@ -76,43 +66,40 @@ while True:
     ROOT = raw_input("Installation root (default: %s) .." % default_ROOT)
     if ROOT == "":
         ROOT = default_ROOT
-        
-    print 
+    print()
 
-    config_url = root_url + "%s/%s/" % (sensor_path , device_id)
-    print("Fetching config from:%s [NB: Make sure to unlock the %s device.] " % (config_url , device_id))
-    
+    config_url = root_url + "%s/%s/" % (sensor_path, device_id)
+    print("Fetching config from:%s [NB: Make sure to unlock the %s device.] " % (config_url, device_id))
+
     try:
-        config = DeviceConfig.download( config_url )
+        config = DeviceConfig.download(config_url)
         break
     except Exception as e:
         print("Failed to download configuration: %s - need to (re)open device on server?\n" % e)
 
-    
+
 
 print("git clone: %s" % config.getRepoURL())
-git_module = GitModule( url = config.getRepoURL() )
+git_module = GitModule(url=config.getRepoURL())
 
-print("git checkout: %s" % config.getGitRef( ) )
-git_module.checkout( config.getGitRef( ) )
+print("git checkout: %s" % config.getGitRef())
+git_module.checkout(config.getGitRef())
 
-print("Git local: %s" % git_module.getRoot( ))
+print("Git local: %s" % git_module.getRoot())
 
-git_module.runTests( "tests/run_tests" )
+git_module.runTests("tests/run_tests")
 
 
-git_module.install( ROOT , dist.files , dist.directories )
-config.save( filename = os.path.join(ROOT , "etc/config.json"))
+git_module.install(ROOT, friskby.files, friskby.directories)
+config.save(filename=os.path.join(ROOT, "etc/config.json"))
 
 while True:
     config_service = raw_input("Configure service [y/N]: ")
     if config_service == "":
         config_service = "N"
-        
-    if config_service in ["y","Y"]:
-        configure_service( os.path.join(ROOT , "bin/fby_client"))
-        break
-    elif config_service in ["n","N"]:
-        break
 
-
+    if config_service in ["y", "Y"]:
+        configure_service(os.path.join(ROOT, "bin/fby_client"))
+        break
+    elif config_service in ["n", "N"]:
+        break
