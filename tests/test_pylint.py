@@ -3,7 +3,7 @@ import requests
 import shutil
 import sys
 import json
-import tempfile 
+import tempfile
 from unittest import TestCase, skipUnless
 import os.path
 import stat
@@ -35,15 +35,18 @@ class PylintTest(TestCase):
     @skipUnless(have_pylint,"Must have pylint executable installed")
     def test_library(self):
         sys.path.insert( 0, os.path.join( self.ROOT , "lib"))
-        for lib in ["lib/ts.py" , 
-                    "lib/device_config.py", 
+        for lib in ["lib/ts.py" ,
+                    "lib/device_config.py",
                     "lib/sampler.py",
                     "lib/dist.py",
                     "lib/git_module.py",
                     "lib/sds011.py",
                     "lib/wifi_config.py",
                     "lib/service.py",
-                    "lib/os_release.py"]:
-                     
+                    "lib/friskby_dao.py",
+                    "lib/fby_submitter",
+                    "lib/os_release.py",
+                    "bin/fby_client"]:
+
             exit_code = subprocess.check_call(["pylint" , "-E", lib])
             self.assertEqual( exit_code , 0 )

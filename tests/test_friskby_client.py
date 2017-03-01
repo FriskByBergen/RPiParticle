@@ -37,7 +37,6 @@ class FriskbyClientCTest(TestCase):
 
         os.environ["FRISKBY_TEST"] = "True"
         client = imp.load_source( "client" , client_path )
-        client.network_block( )
         del os.environ["FRISKBY_TEST"]
 
     @skipUnless(network, "Requires network access")
