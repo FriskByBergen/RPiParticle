@@ -17,7 +17,9 @@ class DeviceConfig(object):
         if not os.path.isfile( filename ):
             raise IOError("No such file: %s" % filename)
 
-        config = json.load( open(filename) )
+        config = None
+        with open(filename, 'r') as js:
+            config = json.load(js)
         if not "post_key" in config:
             if not post_key is None:
                 config["post_key"] = post_key
