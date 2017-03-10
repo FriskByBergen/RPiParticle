@@ -16,8 +16,10 @@ class DeviceConfig(object):
     def __init__(self , filename , post_key = None):
         if not os.path.isfile( filename ):
             raise IOError("No such file: %s" % filename)
-        
-        config = json.load( open(filename) )
+
+        with open(filename) as f:
+            config = json.load( f )
+
         if not "post_key" in config:
             if not post_key is None:
                 config["post_key"] = post_key
