@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import sys
 import requests
 import json
@@ -26,8 +27,8 @@ def configure_wifi():
     conf = WifiConfig()
     while True:
         try:
-            ssid = raw_input("SSID.........: ")
-            psk_key = raw_input("Password.....: ")
+            ssid    = raw_input("SSID:     ")
+            psk_key = raw_input("Password: ")
             conf.addnetwork( ssid, psk_key )
             conf.save()
 
@@ -35,8 +36,8 @@ def configure_wifi():
             break
         except KeyboardInterrupt:
             break
-        except:
-            pass
+        except Exception as err:
+            print('Unable to connect to wifi.\nError message: %s.\nPlease try again or quit with Ctrl-c.' % str(err))
 
 
 def configure_service(client_path):
@@ -51,22 +52,35 @@ def configure_service(client_path):
         print("Sorry - only systemd can be configured")
 
 
+def _is_yes_or_no(token, ch):
+    try:
+        t = str(token).strip().lower()
+        return t == ch
+    except:
+        pass
+    return False
+def yes(token):
+    return _is_yes_or_no(token, 'y')
+def no(token):
+    return _is_yes_or_no(token, 'n')
 
 
+### User interaction
+
+# Step 1: configure wifi
 while True:
     config_wifi = raw_input("Configure wifi [y/N]: ")
-    if config_wifi == "":
-        config_wifi = "N"
-        
-    if config_wifi in ["y","Y"]:
+    if not config_wifi:
+        config_wifi = 'n'
+    if yes(config_wifi):
         configure_wifi()
         print("Wifi configuration saved\n")
         break
-    elif config_wifi in ["n","N"]:
+    elif no(config_wifi):
         break
-    
 
 
+# Step 2: Configure device, server and installation
 while True:
     device_id = raw_input("Device id....: ")
     root_url = raw_input("Root url for server (default: %s) .." % default_root_url)
@@ -76,19 +90,18 @@ while True:
     ROOT = raw_input("Installation root (default: %s) .." % default_ROOT)
     if ROOT == "":
         ROOT = default_ROOT
-        
-    print 
+    print()
 
     config_url = root_url + "%s/%s/" % (sensor_path , device_id)
     print("Fetching config from:%s [NB: Make sure to unlock the %s device.] " % (config_url , device_id))
-    
+
     try:
         config = DeviceConfig.download( config_url )
         break
     except Exception as e:
-        print("Failed to download configuration: %s - need to (re)open device on server?\n" % e)
+        print('Failed to download configuration.  You might need to (re)open device on server.  Error message: "%s"' % e)
 
-    
+
 
 print("git clone: %s" % config.getRepoURL())
 git_module = GitModule( url = config.getRepoURL() )
@@ -98,21 +111,24 @@ git_module.checkout( config.getGitRef( ) )
 
 print("Git local: %s" % git_module.getRoot( ))
 
+print("Running tests ... ")
 git_module.runTests( "tests/run_tests" )
 
 
 git_module.install( ROOT , dist.files , dist.directories )
 config.save( filename = os.path.join(ROOT , "etc/config.json"))
 
+
+# Step 3: Configuring system service
 while True:
     config_service = raw_input("Configure service [y/N]: ")
-    if config_service == "":
+    if not config_service:
         config_service = "N"
-        
-    if config_service in ["y","Y"]:
+
+    if yes(config_service):
         configure_service( os.path.join(ROOT , "bin/fby_client"))
         break
-    elif config_service in ["n","N"]:
+    elif no(config_service):
         break
 
-
+print("Configuration completed.")
