@@ -2,7 +2,6 @@ language: python
 env:
   global:
     - ISTRAVIS=True
-    - PYTHONPATH=python
 python:
   - "2.7"
 install:

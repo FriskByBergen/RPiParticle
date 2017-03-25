@@ -3,3 +3,4 @@ gitpython
 pyserial
 pylint
 python-dateutil
+friskby
