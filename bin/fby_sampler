@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+"""An executable that samples data from the sensor and gives the values to the
+dao to persist.
+
+"""
+from __future__ import print_function
+
+import sys
+
+from friskby import FriskbySampler, FriskbyDao
+from friskby import SDS011
+
+if __name__ == '__main__':
+    # TODO should take config file, and config file should contain path to sql
+    # file and also sample time, etc.
+    if len(sys.argv) > 1:
+        DAO = FriskbyDao(sys.argv[1])
+        SAM = FriskbySampler(SDS011(True), DAO, 10) # 10 sec
+        SAM.collect()
+    else:
+        sys.stderr.write('Please specify database file.\n')

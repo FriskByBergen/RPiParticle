@@ -1,4 +1,4 @@
-from device_config import DeviceConfig
+from friskby import DeviceConfig
 
 
 class TestContext(object):

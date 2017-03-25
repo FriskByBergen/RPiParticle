@@ -1,5 +1,5 @@
 [Unit]
-Description=Friskby logger
+Description=Friskby submitter
 After=network-online.target
 Requires=network-online.target
 
