@@ -1,21 +1,16 @@
 #!/usr/bin/env python
 from __future__ import (print_function, absolute_import)
-import sys
 import os.path
-import friskby
 from friskby import DeviceConfig, GitModule, ServiceConfig
-
-dist_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
-sys.path.insert(0, os.path.join(dist_root, "lib"))
 
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
 default_ROOT = "/usr/local/friskby"
 
-
 def configure_service(client_path):
     if ServiceConfig.systemd():
-        template = os.path.abspath(os.path.join(os.path.dirname(__file__), "../share/friskby.service"))
+        template = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                "../share/friskby.service"))
         sc = ServiceConfig(template)
         sc.save(client_path)
         sc.enable(True)
@@ -37,7 +32,8 @@ while True:
     print()
 
     config_url = root_url + "%s/%s/" % (sensor_path, device_id)
-    print("Fetching config from:%s [NB: Make sure to unlock the %s device.] " % (config_url, device_id))
+    print("Fetching config from:%s [NB: Make sure to unlock the %s device.] " %
+          (config_url, device_id))
 
     try:
         config = DeviceConfig.download(config_url)
@@ -61,13 +57,6 @@ git_module.runTests("tests/run_tests")
 git_module.install(ROOT, None, None) # TODO fix files directory
 config.save(filename=os.path.join(ROOT, "etc/config.json"))
 
-while True:
-    config_service = raw_input("Configure service [y/N]: ")
-    if config_service == "":
-        config_service = "N"
-
-    if config_service in ["y", "Y"]:
-        configure_service(os.path.join(ROOT, "bin/fby_client"))
-        break
-    elif config_service in ["n", "N"]:
-        break
+# configuring service ...
+configure_service(os.path.join(ROOT, "bin/fby_client"))
+# TODO add service fby_submitter and _sampler
