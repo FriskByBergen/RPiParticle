@@ -3,7 +3,7 @@ from __future__ import (print_function, absolute_import)
 import sys
 import os.path
 import friskby
-from friskby import DeviceConfig, GitModule, WifiConfig, ServiceConfig
+from friskby import DeviceConfig, GitModule, ServiceConfig
 
 dist_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.insert(0, os.path.join(dist_root, "lib"))
@@ -11,22 +11,6 @@ sys.path.insert(0, os.path.join(dist_root, "lib"))
 default_root_url = "https://friskby.herokuapp.com"
 sensor_path = "/sensor/api/device"
 default_ROOT = "/usr/local/friskby"
-
-def configure_wifi():
-    conf = WifiConfig()
-    while True:
-        try:
-            ssid = raw_input("SSID.........: ")
-            psk_key = raw_input("Password.....: ")
-            conf.addnetwork(ssid, psk_key)
-            conf.save()
-
-            WifiConfig.ifup()
-            break
-        except KeyboardInterrupt:
-            break
-        except:
-            pass
 
 
 def configure_service(client_path):
@@ -39,22 +23,6 @@ def configure_service(client_path):
         print("Service configuration saved in: %s\n" % sc.config_file)
     else:
         print("Sorry - only systemd can be configured")
-
-
-
-
-while True:
-    config_wifi = raw_input("Configure wifi [y/N]: ")
-    if config_wifi == "":
-        config_wifi = "N"
-
-    if config_wifi in ["y", "Y"]:
-        configure_wifi()
-        print("Wifi configuration saved\n")
-        break
-    elif config_wifi in ["n", "N"]:
-        break
-
 
 
 while True:
@@ -90,7 +58,7 @@ print("Git local: %s" % git_module.getRoot())
 git_module.runTests("tests/run_tests")
 
 
-git_module.install(ROOT, friskby.files, friskby.directories)
+git_module.install(ROOT, None, None) # TODO fix files directory
 config.save(filename=os.path.join(ROOT, "etc/config.json"))
 
 while True:
