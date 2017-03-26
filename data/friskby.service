@@ -1,11 +1,11 @@
 [Unit]
-Description=Friskby submitter
+Description=Friskby logger
 After=network-online.target
 Requires=network-online.target
 
 [Service]
-ExecStart=%(EXECUTABLE)s
-Restart=on-failure
+ExecStart=/usr/local/bin/fby_client
+Restart=always
 RestartSec=600
 
 [Install]
