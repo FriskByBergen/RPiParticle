@@ -3,7 +3,7 @@ Description=Friskby Controlpanel
 
 [Service]
 ExecStart=/usr/local/bin/fby_controlpanel
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
