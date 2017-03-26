@@ -48,6 +48,7 @@ setup(
             [
                 'data/friskby-sampler.service',
                 'data/friskby-submitter.service',
+                'data/friskby-controlpanel.service',
                 'data/friskby.service',
             ],
         )
