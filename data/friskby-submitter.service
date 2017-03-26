@@ -4,8 +4,8 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
-ExecStart=%(EXECUTABLE)s
-Restart=on-failure
+ExecStart=/usr/local/bin/fby_submitter
+Restart=always
 RestartSec=600
 
 [Install]

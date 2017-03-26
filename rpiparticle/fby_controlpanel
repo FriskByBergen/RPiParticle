@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+"""An executable that starts the friskby-controlpanel.
+"""
+from __future__ import print_function
+from friskby_controlpanel import app
+
+if __name__ == '__main__':
+    app.run(host='localhost')

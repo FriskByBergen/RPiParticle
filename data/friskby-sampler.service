@@ -2,7 +2,7 @@
 Description=Friskby sampler
 
 [Service]
-ExecStart=%(EXECUTABLE)s
+ExecStart=/usr/local/bin/fby_sampler
 Restart=always
 RestartSec=60
 
