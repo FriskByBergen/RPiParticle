@@ -1,0 +1,9 @@
+[Unit]
+Description=Friskby Controlpanel
+
+[Service]
+ExecStart=/usr/local/bin/fby_controlpanel
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

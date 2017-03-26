@@ -40,6 +40,7 @@ setup(
                 'rpiparticle/fby_sampler',
                 'rpiparticle/fby_submitter',
                 'rpiparticle/fby_client',
+                'rpiparticle/fby_controlpanel',
             ],
         ),
         (
