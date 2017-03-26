@@ -4,12 +4,13 @@ import sys
 from unittest import TestCase, skipUnless
 import subprocess
 
-retcall = subprocess.call(["which", "pylint"]) # which returns 1 if no pylint
+retcall = subprocess.call(["which", "pylint"])  # which returns 1 if no pylint
 HAVE_PYLINT = True
 if retcall != 0:
     msg = '\n\n** Warning: Could not find pylint. Static checks skipped!\n\n'
     sys.stderr.write(msg)
     HAVE_PYLINT = False
+
 
 class PylintTest(TestCase):
 
@@ -37,7 +38,7 @@ class PylintTest(TestCase):
 
     @skipUnless(HAVE_PYLINT, "Must have pylint executable installed")
     def test_library(self):
-        self._do_test_files('bin/')
+        self._do_test_files('rpiparticle/')
 
     @skipUnless(HAVE_PYLINT, "Must have pylint executable installed")
     def test_tests_meta(self):
