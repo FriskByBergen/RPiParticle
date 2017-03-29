@@ -3,6 +3,10 @@
 """
 from __future__ import print_function
 from friskby_controlpanel import app
+from rpiparticle import fby_settings
+
 
 if __name__ == '__main__':
-    app.run(host='localhost')
+    settings = fby_settings.get_settings()
+    app.run(host=settings['rpi_control_panel_host'],
+            port=settings['rpi_control_panel_port'])
