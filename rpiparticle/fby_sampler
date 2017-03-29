@@ -9,13 +9,17 @@ import sys
 
 from friskby import FriskbySampler, FriskbyDao
 from friskby import SDS011
+from rpiparticle import fby_settings
 
 if __name__ == '__main__':
-    # TODO should take config file, and config file should contain path to sql
-    # file and also sample time, etc.
+
+    settings = fby_settings.get_settings()
+    sample_time = settings['rpi_sample_time']
+    rpi_db = settings['rpi_db']
+
     if len(sys.argv) > 1:
-        DAO = FriskbyDao(sys.argv[1])
-        SAM = FriskbySampler(SDS011(True), DAO, 10) # 10 sec
-        SAM.collect()
-    else:
-        sys.stderr.write('Please specify database file.\n')
+        rpi_db = sys.argv[1]
+
+    DAO = FriskbyDao(rpi_db)
+    SAM = FriskbySampler(SDS011(True), DAO, sample_time)
+    SAM.collect()

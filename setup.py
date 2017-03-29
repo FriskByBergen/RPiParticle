@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='RPiParticle',
-    version='0.7.0',
+    version='0.7.1',
     description='Raspberry Pi and SDS011 particle sensor posting data ',
     long_description=long_description,
     url='https://github.com/FriskByBergen/',
@@ -33,7 +33,14 @@ setup(
         'friskby',
         'friskby-controlpanel',
     ],
+    packages=['rpiparticle'],
     data_files=[
+        (
+            './etc/friskby/',
+            [
+                'data/friskby-settings.json'
+            ]
+        ),
         (
             './bin/',
             [

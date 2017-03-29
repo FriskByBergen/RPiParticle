@@ -1,0 +1,8 @@
+{
+    "rpi_db": "/usr/local/var/friskby/friskby.sql",
+    "rpi_particle_sensor_path": "/dev/usb0",
+    "rpi_sample_time": 10,
+    "rpi_config_path": "/usr/local/friskby/etc/config.json",
+    "rpi_control_panel_host": "0.0.0.0",
+    "rpi_control_panel_port": "80",
+}

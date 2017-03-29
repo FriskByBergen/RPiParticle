@@ -7,13 +7,14 @@ Marks uploaded data in dao as such.
 from __future__ import print_function
 import sys
 from friskby import FriskbySubmitter, FriskbyDao
+from rpiparticle import fby_settings
 
 if __name__ == '__main__':
-    # TODO should take config file, and config file should contain path to sql
-    # file and also sample time, etc.
+    settings = fby_settings.get_settings()
+    rpi_db = settings['rpi_db']
     if len(sys.argv) > 1:
-        DAO = FriskbyDao(sys.argv[1])
-        SUB = FriskbySubmitter(DAO)
-        SUB.post()
-    else:
-        sys.stderr.write('Please specify database file.\n')
+        rpi_db = sys.argv[1]
+
+    DAO = FriskbyDao(rpi_db)
+    SUB = FriskbySubmitter(DAO)
+    SUB.post()
