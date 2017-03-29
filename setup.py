@@ -26,7 +26,6 @@ setup(
     ],
     install_requires=[
         'requests',
-        'gitpython',
         'pyserial',
         'pylint',
         'python-dateutil',
