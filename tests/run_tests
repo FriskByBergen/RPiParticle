@@ -3,10 +3,8 @@ import sys
 import os
 import os.path
 from unittest import TestLoader, TextTestRunner
-from friskby import SDS011
 
-if SDS011.is_mock():
-    os.environ["FRISKBY_TEST"] = "True"
+os.environ["FRISKBY_TEST"] = "True"
 
 def find_tests(path, recursive=True, pattern="test*.py"):
     loader = TestLoader()

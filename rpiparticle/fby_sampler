@@ -9,17 +9,18 @@ import sys
 
 from friskby import FriskbySampler, FriskbyDao
 from friskby import SDS011
-from rpiparticle import fby_settings
+from rpiparticle import get_settings
 
 if __name__ == '__main__':
 
-    settings = fby_settings.get_settings()
+    settings = get_settings()
     sample_time = settings['rpi_sample_time']
     rpi_db = settings['rpi_db']
+    sds011_path = settings['rpi_sds011']
 
     if len(sys.argv) > 1:
         rpi_db = sys.argv[1]
 
     DAO = FriskbyDao(rpi_db)
-    SAM = FriskbySampler(SDS011('/dev/ttyUSB0'), DAO, sample_time)
+    SAM = FriskbySampler(SDS011(sds011_path), DAO, sample_time)
     SAM.collect()

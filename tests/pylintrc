@@ -1,0 +1,4 @@
+[MASTER]
+extension-pkg-whitelist=numpy
+disable=R,C,W
+reports=no
