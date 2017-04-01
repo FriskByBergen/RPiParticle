@@ -32,7 +32,8 @@ class PylintTest(TestCase):
             if len(fname) > 2 and self._is_python_file(path, fname):
                 fpath = join(path, fname)
                 print('Linting %s.' % fpath)
-                retcode = subprocess.call(["pylint", "-E", fpath])
+                retcode = subprocess.call(["pylint", "--rcfile=tests/pylintrc",
+                                           fpath])
                 self.assertEqual(0, retcode,
                                  msg='linting required for %s' % fpath)
 
