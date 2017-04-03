@@ -6,13 +6,11 @@ cloud.
 
 from __future__ import (print_function, absolute_import)
 import os
-from friskby import FriskbyRunner
+from friskby import FriskbyRunner, DeviceConfig
 from rpiparticle import fby_settings
 
 if __name__ == "__main__":
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
     CONFIG_FILE = fby_settings.get_setting("rpi_config_path")
-    VAR_PATH = os.path.join(ROOT, "var")
-
-    FBY = FriskbyRunner(root=ROOT, config_file=CONFIG_FILE, var_path=VAR_PATH)
+    DEV_CFG = DeviceConfig(CONFIG_FILE)
+    FBY = FriskbyRunner(DEV_CFG)
     FBY.run()
