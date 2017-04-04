@@ -7,7 +7,7 @@ webserver for updates, and if a new version has been configured the script will
 invoke git to download a new version and restart itself.
 
 """
-__version__ = '0.8.1'
+__version__ = '0.8.2'
 
 from .fby_settings import get_setting, get_settings
 

@@ -6,7 +6,7 @@ Requires=network-online.target
 [Service]
 ExecStart=/usr/local/bin/fby_client
 Restart=always
-RestartSec=600
+RestartSec=1800
 
 [Install]
 WantedBy=multi-user.target
