@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-"""The old runner, checks if there is a new update in git and in the friskby
+"""The friskby manager, checks if there is a new update in git and in the friskby
 cloud.
 
 """
 
 from __future__ import (print_function, absolute_import)
 import os
-from friskby import FriskbyRunner, DeviceConfig
+from friskby import FriskbyManager, DeviceConfig
 from rpiparticle import fby_settings
 
 if __name__ == "__main__":
     CONFIG_FILE = fby_settings.get_setting("rpi_config_path")
     DEV_CFG = DeviceConfig(CONFIG_FILE)
-    FBY = FriskbyRunner(DEV_CFG)
+    FBY = FriskbyManager(DEV_CFG)
     FBY.run()
