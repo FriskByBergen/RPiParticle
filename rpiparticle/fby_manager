@@ -34,4 +34,3 @@ if __name__ == "__main__":
                          managed_packages=managed_packages,
                          managed_services=managed_services)
     FBY.run()
-    FBY.update_client(DEV_CFG)
