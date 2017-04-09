@@ -1,16 +1,36 @@
 #!/usr/bin/env python
-"""The friskby manager, checks if there is a new update in git and in the friskby
-cloud.
-
+"""Instructs the Friskby Manager to update the client.
 """
-
 from __future__ import (print_function, absolute_import)
-import os
+
+try:
+    # python-dbus (the apt package) is an implicit depends of RPiParticle,
+    # because an explicit depends would make this package arch dependent.
+    # So, in case of import failure, we instruct the user to install the
+    # apt package. For users of the Friskby RPi image, this will be
+    # installed already.
+    import dbus
+except ImportError:
+    raise ImportError('Please install python-dbus.')
+
+import pip
+
 from friskby import FriskbyManager, DeviceConfig
 from rpiparticle import fby_settings
 
 if __name__ == "__main__":
     CONFIG_FILE = fby_settings.get_setting("rpi_config_path")
     DEV_CFG = DeviceConfig(CONFIG_FILE)
-    FBY = FriskbyManager(DEV_CFG)
+
+    managed_packages = ["friskby", "friskby-controlpanel", "rpiparticle"]
+    managed_services = [
+        'friskby.service',
+        'friskby-sampler.service',
+        'friskby-submitter.service',
+        'friskby-controlpanel.service',
+    ]
+
+    FBY = FriskbyManager(DEV_CFG, pip=pip, dbus=dbus,
+                         managed_packages=managed_packages,
+                         managed_services=managed_services)
     FBY.run()
