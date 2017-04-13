@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='RPiParticle',
-    version='0.9.0',
+    version='0.9.1',
     description='Raspberry Pi and SDS011 particle sensor posting data ',
     long_description=long_description,
     url='https://github.com/FriskByBergen/',
@@ -27,11 +27,14 @@ setup(
     install_requires=[
         'requests',
         'pyserial',
-        'pylint',
         'python-dateutil',
         'friskby>=0.66',
         'friskby-controlpanel',
     ],
+    tests_require=[
+        'pylint',
+    ],
+    test_suite='tests',
     packages=['rpiparticle'],
     data_files=[
         (
