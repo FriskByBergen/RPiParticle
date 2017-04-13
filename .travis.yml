@@ -1,13 +1,17 @@
 language: python
-env:
-  global:
-    - ISTRAVIS=True
 python:
   - '2.7'
+addons:
+  apt:
+    packages:
+    - python-dev
+    - python-dbus
+virtualenv:
+  system_site_packages: true
 install:
   - pip install .
 script:
-  - tests/run_tests
+  - python setup.py test
 deploy:
   provider: pypi
   user: friskby
