@@ -40,12 +40,6 @@ setup(
     package_data={'rpiparticle': ['friskby-settings.json']},
     data_files=[
         (
-            './etc/friskby/',
-            [
-                'data/friskby-settings.json'
-            ]
-        ),
-        (
             './bin/',
             [
                 'rpiparticle/fby_sampler',
