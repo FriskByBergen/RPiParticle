@@ -36,6 +36,8 @@ setup(
     ],
     test_suite='tests',
     packages=['rpiparticle'],
+    package_dir={'rpiparticle': 'rpiparticle'},
+    package_data={'rpiparticle': ['friskby-settings.json']},
     data_files=[
         (
             './etc/friskby/',
