@@ -31,5 +31,14 @@ def get_setting(setting):
 def set_setting(key, value):
     settings_json = get_settings_json()
     settings_json[key] = value
+
+    _create_directory_structure()
+
     with open(SETTINGS_PATH, 'w+') as settings_file:
         json.dump(settings_json, settings_file)
+
+
+def _create_directory_structure():
+    path, _ = os.path.split(SETTINGS_PATH)
+    if not os.path.isdir(path):
+        os.makedirs(path)  # equivalent to `mkdir -p _path`
