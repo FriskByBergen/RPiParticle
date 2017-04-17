@@ -2,6 +2,8 @@ import json
 import os
 import tempfile
 import unittest
+import shutil
+from random import randint
 from rpiparticle import fby_settings
 
 
@@ -70,6 +72,20 @@ class SettingsFileDoesNotExistTestCase(unittest.TestCase):
 
         # Clean up.
         os.remove(fby_settings.SETTINGS_PATH)
+
+    def test_save_creates_directory_structure(self):
+        """Essentially the same as test_saving_some_setting, but we request
+        that the settings file is stored in some non-existent folder."""
+
+        tmp_dir = '/tmp/friskby/%d/foo/bar/baz' % randint(2**32, 2**42)
+        fby_settings.SETTINGS_PATH = os.path.join(tmp_dir, 'settings.json')
+        fby_settings.set_setting('foo', 'bar')
+
+        with open(fby_settings.SETTINGS_PATH) as new_settings_file:
+            settings = json.load(new_settings_file)
+            self.assertEqual(settings['foo'], 'bar')
+
+        shutil.rmtree('/tmp/friskby')
 
 
 if __name__ == '__main__':
