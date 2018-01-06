@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='RPiParticle',
-    version='0.9.2',
+    version='0.9.3',
     description='Raspberry Pi and SDS011 particle sensor posting data ',
     long_description=long_description,
     url='https://github.com/FriskByBergen/',
