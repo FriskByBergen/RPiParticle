@@ -1,3 +1,5 @@
+dist: trusty
+sudo: required
 language: python
 python:
   - '2.7'
@@ -6,11 +8,10 @@ addons:
     packages:
     - python-dev
     - python-dbus
-virtualenv:
-  system_site_packages: true
 install:
-  - pip install .
+  - sudo pip install .
 script:
+  - python --version
   - python setup.py test
 deploy:
   provider: pypi
@@ -18,4 +19,4 @@ deploy:
   password:
     secure: "dAhqPZu9pAWNAjizh4PvJQYKdxcK8NGkL3ey1yEbgaO2PAxcJ/a3tMHOzHwZ+5s22q6p2MTu+MJpe+Wh7MAawK3JGOTGTs5Cp+S+fbnOWvx6hqeCh77LuvuzTK0CTRZZk3o76MoILMJn8P0huQ9siZxCapUQi2QKSQZ5UBtBO1/D0V856EAsH1Fg1iyJh4M8hCF+JCZi8irFC+7fU1xVxV26At2gYgWooZMMqqKOCwZXXYLS8DQ5v7rToquHRckenDqEjbh7hhn2U+pHXFaY0/JDffvdRuq5a6rTGo3xdbZfD31Mt//hxEo8hYYG4mVy7yviDT4pjKxq6C4wlxN+8BOwdEapqOvmByCIRBggzBpEK2LnbDMe602VvWSYUjdYn6sT6aNJ4I0lHqGl6gtTukkaQz2/aziHWmQqRpNDd8c9STxxj/7/wpY0oOE92gsclq7CSgx+BdfPIpQeoyt1kduUcO3yAacnOXIBTrpcjEwXTL3OA+sKE8IGWoOv63gNGkhrguryGh39XZ6Lp+8xsPO8Hi6buCxQJoI2U2/Hwm6aFn5a3CRl9SLi0VaL2OidMIZzsulY0GzmWDSLS9y3vpaHKnFnJ2dd3DBqxU88ie5wcnm9mlBTP3K/TKpLTVbI0tub59tHo4qGsI/Ba/shKvVQjZTRtTllTQgNogHvP3M="
   branch: master
-  distributions: sdist bdist_wheel
+  distributions: "sdist bdist_wheel"
