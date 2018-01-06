@@ -3,6 +3,6 @@
     "rpi_sample_time": 300,
     "rpi_config_path": "/usr/local/friskby/etc/config.json",
     "rpi_control_panel_host": "0.0.0.0",
-    "rpi_control_panel_port": "80",
+    "rpi_control_panel_port": 80,
     "rpi_sds011": "/dev/ttyUSB0"
 }
